@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+    --darkest-red: #6C1509;
+    --main-red: #A43424;
+    --theme-yellow: #F9CF46;
+    --table-row-one: #FFD0C9;
+    --table-row-two: #FFE7E3;
+    --theme-white: #FEF4F3;
+  }
+
+.bg-darkest-red {
+    background-color: var(--darkest-red);
+}
+  
+.bg-main-red {
+    background-color: var(--main-red);
+}
+  
+.text-main-red {
+    color: var(--main-red);
+}
+  
+.bg-table-row-one {
+    background-color: var(--table-row-one);
+}
+  
+.bg-table-row-two {
+    background-color: var(--table-row-two);
+}
+  
+.text-theme-white {
+    color: var(--theme-white);
+}
+  
+.button-primary {
+    background-color: var(--main-red);
+    color: var(--theme-white);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+  
+.button-primary:hover {
+    background-color: var(--darkest-red);
+}
+  
+@layer components {
+    .btn-primary {
+      @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-2xl px-4 py-2 shadow-lg;
+    }
+    .card-primary {
+      @apply bg-[var(--table-row-one)] rounded-2xl shadow-md p-4;
+    }
+    .table-header {
+      @apply bg-[var(--darkest-red)] text-[var(--theme-white)] font-semibold;
+    }
+  }
