@@ -52,7 +52,13 @@
     .card-primary {
       @apply bg-[var(--table-row-one)] rounded-2xl shadow-md p-4;
     }
+    .card-count{
+      @apply bg-[var(--theme-white)] rounded-2xl shadow-md p-4;
+    }
     .table-header {
       @apply bg-[var(--darkest-red)] text-[var(--theme-white)] font-semibold;
     }
+    .summary-span {
+      @apply text-[color:var(--theme-white)] bg-[var(--darkest-red)];
+    }    
   }
