@@ -50,13 +50,8 @@
       @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-2xl px-4 py-2 shadow-lg;
     }
     .card-primary {
-      @apply bg-[var(--table-row-one)] rounded-2xl shadow-md p-3;
+      @apply bg-[var(--table-row-one)] rounded-2xl shadow-md p-4;
     }
-
-    .card-count {
-      @apply bg-[var(--theme-white)] rounded-2xl shadow-md p-3
-    }
-
     .table-header {
       @apply bg-[var(--darkest-red)] text-[var(--theme-white)] font-semibold;
     }

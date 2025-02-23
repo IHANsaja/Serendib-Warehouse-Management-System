@@ -4,17 +4,13 @@ import AICameraView from "../components/AImodel/AICameraView";
 import AIStackSummary from "../components/AImodel/AIStackSummary";
 import AITable from "../components/AImodel/AITable";
 import AIModelContainer from "../components/AImodel/AIModelContainer";
-import AIcount from "../components/AImodel/AIcount";
 
 const AIOutput = () => (
   <AIModelContainer>
     <AIHeader />
     <div className="grid grid-cols-3 gap-4">
       <AICameraView className="col-span-2" />
-      <div className="flex flex-col space-y-4">
-        <AIcount />
-        <AIStackSummary />
-      </div>
+      <AIStackSummary />
     </div>
     <AITable />
   </AIModelContainer>

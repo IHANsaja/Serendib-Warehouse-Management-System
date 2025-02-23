@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import AIOutput from './pages/AIresponsePG.jsx'
+import AIOutput from './pages/AIresponsePG'
 
 function App() {
   const [count, setCount] = useState(0)
