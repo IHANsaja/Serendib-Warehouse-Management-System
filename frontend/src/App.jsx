@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import './App.css'
-import AIOutput from './pages/AIresponsePG'
+import DataInputForm from './pages/dataInputPG'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <AIOutput />
-    
+    <div>
+      <DataInputForm />
+    </div>
   )
 }
 
