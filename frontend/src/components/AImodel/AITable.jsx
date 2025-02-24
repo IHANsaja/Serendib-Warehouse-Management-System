@@ -7,8 +7,8 @@ const AITable = () => (
       <tr>
         <th className="text-sm md:text-base lg:text-lg">Truck ID</th>
         <th className="text-sm md:text-base lg:text-lg">Truck Weight</th>
-        <th className="text-sm md:text-base lg:text-lg">No. of Stacks</th>
-        <th className="text-sm md:text-base lg:text-lg">Overlapping Stack Pairs</th>
+        <th className="text-sm md:text-base lg:text-lg">No. of Sacks</th>
+        <th className="text-sm md:text-base lg:text-lg">Overlapping Sack Pairs</th>
         <th className="text-sm md:text-base lg:text-lg">Order Date</th>
         <th className="text-sm md:text-base lg:text-lg">Description</th>
       </tr>
