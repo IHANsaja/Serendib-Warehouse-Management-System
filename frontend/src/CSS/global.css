@@ -86,5 +86,8 @@
     }
     .AIdata-table{
       @apply text-[color:var(--darkest-red)];
+    }
+    .bay-area{
+      @apply w-full bg-[var(--table-row-two)] text-[var(--darkest-red)] z-10 rounded-lg shadow-md p-4;
     }    
   }

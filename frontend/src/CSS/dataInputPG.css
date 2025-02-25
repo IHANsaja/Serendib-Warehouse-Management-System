@@ -24,11 +24,6 @@
     padding: 1rem;
     text-align: center;
   }
-  
-  h1, h2, h3 {
-    color: var(--main-color);
-  }
-  
   /* Buttons */
   button {
     background-color: var(--main-color);
