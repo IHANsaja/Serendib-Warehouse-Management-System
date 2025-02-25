@@ -22,7 +22,7 @@ function AIcount() {
   return (
     <div className="flex flex-col card-count space-y-4">
       <div className="flex flex-row justify-between text-[color:var(--main-red)]">
-        <h2 className="text-sm md:text-base lg:text-lg font-semibold">Stack Count</h2>
+        <h2 className="text-sm md:text-base lg:text-lg font-semibold">Sack Count</h2>
         <p className="text-sm md:text-base lg:text-lg">{progress}/{totalStacks}</p>
       </div>
       <div className="relative w-full h-1 bg-gray-200 rounded-2xl shadow-inner">
