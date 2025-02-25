@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import './App.css'
-import AIOutput from './pages/AIresponsePG'
+import DashboardPG from './pages/dashboardPG'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <AIOutput />
+    <DashboardPG />
   )
 }
 

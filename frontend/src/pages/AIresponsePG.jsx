@@ -6,7 +6,7 @@ import AITable from "../components/AImodel/AITable";
 import AIModelContainer from "../components/AImodel/AIModelContainer";
 import AIcount from "../components/AImodel/AIcount";
 
-const AIOutput = () => (
+const AIresponsePG = () => (
   <div>
     <AIHeader />
     <AIModelContainer>
@@ -22,4 +22,4 @@ const AIOutput = () => (
   </div>
 );
 
-export default AIOutput;
+export default AIresponsePG;
