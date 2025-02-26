@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
     --darkest-red: #6C1509;
@@ -7,6 +8,10 @@
     --table-row-one: #FFD0C9;
     --table-row-two: #FFE7E3;
     --theme-white: #FEF4F3;
+  }
+
+  body {
+    @apply font-roboto;
   }
 
 .bg-darkest-red {
@@ -71,6 +76,9 @@
     }
     .card-primary {
       @apply bg-[var(--main-red)] rounded-lg p-4;
+    }
+    .header-head{
+      @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-lg px-4 py-2 shadow-lg;
     }
     .card-count{
       @apply bg-[var(--theme-white)] rounded-lg shadow-md p-4;
