@@ -10,7 +10,7 @@ const data = [
 
 const ProcessAccuracy = () => {
     return (
-        <div className="bg-white p-4 rounded-2xl shadow-lg">
+        <div className="bg-[var(--theme-white)] text-[var(--darkest-red)] p-4 rounded-2xl shadow-lg">
             <h3 className="text-lg font-semibold text-center mb-4">Accuracy Increase Over Time (Loading vs Unloading)</h3>
             <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={data}>
