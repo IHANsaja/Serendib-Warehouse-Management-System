@@ -10,9 +10,9 @@
     --theme-white: #FEF4F3;
   }
 
-  body {
-    @apply font-roboto;
-  }
+body {
+  font-family: 'Roboto', sans-serif;
+}
 
 .bg-darkest-red {
     background-color: var(--darkest-red);

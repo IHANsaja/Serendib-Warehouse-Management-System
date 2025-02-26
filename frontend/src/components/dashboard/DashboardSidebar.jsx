@@ -1,11 +1,12 @@
 import '../../CSS/global.css';
-import { FaTachometerAlt, FaTruckLoading, FaTruck, FaFileAlt, FaCog } from 'react-icons/fa';
+import { FaTachometerAlt, FaTruckLoading, FaTruck, FaFileAlt, FaCog, FaUserTie } from 'react-icons/fa';
 
-const DashboardSidebar = () => {
+const DashboardSidebar = ({ activeTab, setActiveTab }) => {
     const menuItems = [
         { name: "Dashboard", icon: <FaTachometerAlt /> },
         { name: "Loadings", icon: <FaTruckLoading /> },
         { name: "Unloadings", icon: <FaTruck /> },
+        { name: "Employees", icon: <FaUserTie />},
         { name: "Reports", icon: <FaFileAlt /> },
         { name: "Settings", icon: <FaCog /> },
     ];
@@ -19,8 +20,12 @@ const DashboardSidebar = () => {
                 {menuItems.map((item, index) => (
                     <li
                         key={index}
-                        className="flex items-center gap-3 w-full h-[50px] z-10 cursor-pointer p-2 pl-6 rounded-e-3xl relative transition-all duration-300 ease-in-out
-                                   hover:bg-[var(--theme-yellow)] hover:shadow-lg hover:text-[var(--main-red)] hover:w-[105%]"
+                        className={`flex items-center gap-3 w-full h-[50px] z-10 cursor-pointer p-2 pl-6 rounded-e-3xl relative transition-all duration-300 ease-in-out
+                                    ${activeTab === item.name
+                                ? 'bg-[var(--theme-yellow)] shadow-lg text-[var(--main-red)] w-[105%]'
+                                : 'hover:bg-[var(--theme-yellow)] hover:shadow-lg hover:text-[var(--main-red)] hover:w-[105%]'
+                            }`}
+                        onClick={() => setActiveTab(item.name)}
                     >
                         <span className="text-xl">{item.icon}</span>
                         {item.name}
