@@ -74,6 +74,10 @@ body {
       hover:bg-[var(--darkest-red)] hover:shadow-[0_0_15px_rgba(164,52,36,0.5)] 
       active:brightness-90;
     }
+    .btn-primary:disabled {
+      @apply bg-gray-400 text-gray-200 cursor-grab opacity-50
+      transition-all duration-300 ease-in-out;
+    }
     .card-primary {
       @apply bg-[var(--main-red)] rounded-lg p-4;
     }

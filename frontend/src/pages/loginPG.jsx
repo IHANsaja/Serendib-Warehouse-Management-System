@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import LoginForm from "../components/login/LoginForm.jsx";
 import RoleSelector from "../components/login/RoleSelector.jsx"; 
-import "../CSS/Login.css";
+
 
 const LoginPG = () => {
   const [role, setRole] = useState("Administrator");

@@ -49,7 +49,7 @@ const Employees = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 
-                                       transform hover:-translate-y-1"
+                                       transform hover:-translate-y-1 cursor-grab"
                         >
                             <h3 className="text-lg font-semibold text-[var(--main-red)] mb-2">{employee.name}</h3>
                             <p className="text-sm text-gray-600 mb-1">ID: {employee.id}</p>
