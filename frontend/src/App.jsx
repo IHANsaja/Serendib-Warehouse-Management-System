@@ -1,16 +1,28 @@
-import { useState } from 'react'
-import './App.css'
-import DataInputForm from './pages/dataInputPG'
-import DashboardPG from './pages/dashboardPG'
+import React, { useState } from "react";
+import DataInputForm from "./pages/dataInputPG";
+import LoginPG from "./pages/loginPG";
+import AIresponsePG from "./pages/AIresponsePG";
+import DashboardPG from "./pages/dashboardPG";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [role, setRole] = useState(null);
 
-  return (
-    <div>
-      <DashboardPG />
-    </div>
-  )
+  const renderPage = () => {
+    switch (role) {
+      case "Administrator":
+        return <DashboardPG />;
+      case "Executive":
+        return <DataInputForm />;
+      case "Security Officer":
+        return <DataInputForm />;
+      case "Inventory Officer":
+        return <AIresponsePG />;
+      default:
+        return <LoginPG setRole={setRole} />;
+    }
+  };
+
+  return <div>{renderPage()}</div>;
 }
 
-export default App
+export default App;

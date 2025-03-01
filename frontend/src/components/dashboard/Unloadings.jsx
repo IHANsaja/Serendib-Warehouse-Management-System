@@ -9,13 +9,13 @@ const UnloadingTable = ({ title, data, filterDate, onDateChange }) => (
                 <h3 className="text-lg font-semibold text-[var(--main-red)]">{title}</h3>
             </div>
             <div className="flex items-center gap-3">
-                <div className="relative">
-                    <FaBars className="absolute left-3 top-3 text-gray-400" />
+                <div className="relative w-80">
+                    <FaBars className="absolute left-3 top-5 text-[var(--main-red)] opacity-80" />
                     <input
                         type="text"
                         placeholder="Enter Product ID"
-                        className="pl-10 pr-3 py-2 border border-[var(--main-red)] rounded-lg text-sm w-48 
-                                    bg-[var(--first-row)] text-[var(--main-red)] placeholder-[var(--main-red)]
+                        className="pl-10 pr-3 py-2 border border-[var(--main-red)] rounded-lg text-sm w-80 
+                                    bg-[var(--first-row)] text-[var(--main-red)] placeholder-[var(--main-red)] placeholder:opacity-80 placeholder:p-8
                                     focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow-sm"
                     />
                 </div>

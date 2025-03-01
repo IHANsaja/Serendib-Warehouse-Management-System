@@ -1,4 +1,3 @@
-import '../../CSS/global.css';
 import { FaTachometerAlt, FaTruckLoading, FaTruck, FaFileAlt, FaCog, FaUserTie } from 'react-icons/fa';
 
 const DashboardSidebar = ({ activeTab, setActiveTab }) => {

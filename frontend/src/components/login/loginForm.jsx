@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 
-const LoginForm = ({ role }) => {
+const LoginForm = ({ role, onLogin }) => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Logging in as:", role, username);
+    onLogin(); // Trigger login function
   };
 
   return (
@@ -25,7 +26,7 @@ const LoginForm = ({ role }) => {
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      <button className="login" type="submit">Login</button>
+      <button className="login login-button" type="submit">Login</button>
     </form>
   );
 };

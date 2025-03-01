@@ -1,6 +1,3 @@
-import React from "react";
-import "../../CSS/global.css";
-
 const AITable = () => (
   <table className="w-full mt-4 text-center table-auto rounded-2xl AIdata-table">
     <thead className="table-header">

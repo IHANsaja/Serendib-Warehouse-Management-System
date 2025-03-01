@@ -1,1 +1,178 @@
+/* Import Tailwind CSS and Google Fonts */
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* Define Custom Colors */
+:root {
+    --darkest-red: #6C1509;
+    --main-red: #A43424;
+    --theme-yellow: #F9CF46;
+    --table-row-one: #FFD0C9;
+    --table-row-two: #FFE7E3;
+    --theme-white: #FEF4F3;
+    --highlight-color: #FFD0C9;
+    --secondary-color: #FFE7E3;
+    --background-light: #FEF4F3;
+    --background-dark: #6C1509;
+}
+
+/* Body Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-light);
+    color: var(--background-dark);
+    margin: 0;
+    padding: 0;
+}
+
+/* Input Fields */
+input, select, textarea {
+    background-color: var(--background-light);
+    color: var(--background-dark);
+    border: 1px solid var(--background-dark);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--theme-yellow);
+}
+
+/* Links */
+a {
+    color: var(--main-red);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: var(--theme-yellow);
+}
+
+/* Card or Section Backgrounds */
+.card, .section {
+    background-color: var(--secondary-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Highlighted Elements */
+.highlight {
+    background-color: var(--highlight-color);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--background-dark);
+    color: white;
+    padding: 1rem;
+}
+
+.navbar a {
+    color: white;
+    padding: 0.5rem;
+    text-decoration: none;
+    margin: 0 1rem;
+}
+
+.navbar a:hover {
+    background-color: var(--main-red);
+    border-radius: 0.5rem;
+}
+
+/* Footer Styles */
+footer {
+    background-color: var(--background-dark);
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Utility Classes */
+.text-main {
+    color: var(--main-red);
+}
+
+.bg-main {
+    background-color: var(--main-red);
+}
+
+.bg-accent {
+    background-color: var(--theme-yellow);
+}
+
+/* Custom Button Styles */
+.button-primary {
+    background-color: var(--main-red);
+    color: var(--theme-white);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.button-primary:hover {
+    background-color: var(--darkest-red);
+}
+
+/* Fluid Text */
+.text-fluid {
+  font-size: clamp(1rem, 5vw, 2rem);
+}
+
+/* Progress Bar */
+@keyframes progressBarAnimation {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.progress-bar {
+  animation: progressBarAnimation 3s ease-out forwards;
+}
+
+/* Component Styles */
+@layer components {
+    .btn-primary {
+      @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-lg px-4 py-2 shadow-lg 
+      transition-all duration-300 ease-in-out 
+      hover:bg-[var(--darkest-red)] hover:shadow-[0_0_15px_rgba(164,52,36,0.5)] 
+      active:brightness-90;
+    }
+    .btn-primary:disabled {
+      @apply bg-gray-400 text-gray-200 cursor-grab opacity-50
+      transition-all duration-300 ease-in-out;
+    }
+    .card-primary {
+      @apply bg-[var(--main-red)] rounded-lg p-4;
+    }
+    .header-head{
+      @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-lg px-4 py-2 shadow-lg;
+    }
+    .card-count{
+      @apply bg-[var(--theme-white)] rounded-lg shadow-md p-4;
+    }
+    .card-summary {
+      @apply bg-[#F9DEDC] rounded-lg p-4;
+    }
+    .table-header {
+      @apply bg-[var(--darkest-red)] text-[var(--theme-white)] text-center font-semibold;
+    }
+    .summary-span {
+      @apply text-[color:var(--theme-white)] bg-[var(--darkest-red)] flex justify-center items-center ml-2;
+    }
+    .AIdata-table{
+      @apply text-[color:var(--darkest-red)];
+    }
+    .bay-area{
+      @apply w-full bg-[var(--table-row-two)] text-[var(--darkest-red)] z-10 rounded-lg shadow-md p-4;
+    }    
+}

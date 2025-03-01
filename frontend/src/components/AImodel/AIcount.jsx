@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "../../CSS/global.css";
 
 function AIcount() {
   const totalStacks = 500;

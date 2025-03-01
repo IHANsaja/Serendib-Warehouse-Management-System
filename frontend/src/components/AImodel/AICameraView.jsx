@@ -1,5 +1,3 @@
-import React from "react";
-import "../../CSS/global.css";
 import cameraView from "../../assets/Camerafeed.png";
 
 const AICameraView = () => (

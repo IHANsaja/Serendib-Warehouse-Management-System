@@ -1,6 +1,3 @@
-import React from "react";
-import "../../CSS/global.css";
-
 const AIStackSummary = () => (
   <div>
     <div className="card-summary text-[color:var(--darkest-red)]">

@@ -23,19 +23,19 @@ const Employees = () => {
     return (
         <div className="bg-[var(--theme-white)] p-6 rounded-2xl shadow-lg space-y-6">
             <h1 className="text-3xl font-bold text-[var(--main-red)] mb-6 text-center md:text-left flex items-center gap-2">
-                <FaUserTie className="text-[var(--theme-yellow)]" /> Employee Performance Overview
+                <FaUserTie className="text-[var(--main-red)]" /> Employee Performance Overview
             </h1>
 
-            <div className="flex justify-end mb-6 relative w-full md:w-1/3">
-                <FaSearch className="absolute left-3 top-3 text-gray-400" />
+            <div className="flex flex-row justify-center items-center mb-6 relative w-full md:w-1/3">
+                <FaSearch className="absolute left-3 top-5 text-[var(--main-red)] opacity-50" />
                 <input
                     type="text"
                     placeholder="Search by name, ID, or role"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-[var(--main-red)] rounded-2xl text-base 
-                               bg-[var(--table-row-one)] text-[var(--main-red)] placeholder-[var(--main-red)]
-                               focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow"
+                    className="w-full ml-5 pl-10 pr-4 py-3 border border-[var(--main-red)] rounded-2xl text-base 
+                            bg-[var(--table-row-one)] text-[var(--main-red)] placeholder:text-[var(--main-red)] placeholder:pl-8 placeholder:opacity-50
+                            focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow"
                 />
             </div>
 
