@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DataTable from "../dataInput/dataTable.jsx";
 
 const OrderForm = () => {
   const [formData, setFormData] = useState({
@@ -40,7 +41,12 @@ const OrderForm = () => {
       order.id === id
         ? {
             ...order,
-            status: order.status === "pending" ? "ok" : order.status === "ok" ? "not ok" : "ok",
+            status:
+              order.status === "pending"
+                ? "ok"
+                : order.status === "ok"
+                ? "not ok"
+                : "ok",
           }
         : order
     );
@@ -167,7 +173,7 @@ const OrderForm = () => {
         <div className="col-span-3 flex justify-end mt-4">
           <button
             type="submit"
-            className="w-40 py-3 bg-main text-white rounded-lg hover:bg-accent transition duration-300 text-center"
+            className="w-40 py-3 btn-primary cursor-pointer"
           >
             Submit
           </button>
@@ -176,56 +182,7 @@ const OrderForm = () => {
 
       {/* Table to display submitted orders */}
       {orders.length > 0 && (
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold">Submitted Orders</h3>
-          <table className="min-w-full mt-4 border-collapse">
-            <thead>
-              <tr>
-                <th className="border p-2">Customer Name</th>
-                <th className="border p-2">Order No</th>
-                <th className="border p-2">Item Code</th>
-                <th className="border p-2">Quantity</th>
-                <th className="border p-2">Item</th>
-                <th className="border p-2">Vehicle No</th>
-                <th className="border p-2">Date</th>
-                <th className="border p-2">Type</th>
-                <th className="border p-2">Status</th>
-                <th className="border p-2">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order.id}>
-                  <td className="border p-2">{order.CustomerName}</td>
-                  <td className="border p-2">{order.OrderNo}</td>
-                  <td className="border p-2">{order.ItemCode}</td>
-                  <td className="border p-2">{order.Quantity}</td>
-                  <td className="border p-2">{order.Item}</td>
-                  <td className="border p-2">{order.VehicleNo}</td>
-                  <td className="border p-2">{order.Date}</td>
-                  <td className="border p-2">{order.Type}</td>
-                  <td className="border p-2">
-                    {order.status === "ok" ? (
-                      <span className="text-green-500">✔️</span>
-                    ) : order.status === "not ok" ? (
-                      <span className="text-red-500">❌</span>
-                    ) : (
-                      <span className="text-yellow-500">❗</span>
-                    )}
-                  </td>
-                  <td className="border p-2">
-                    <button
-                      onClick={() => handleStatusChange(order.id)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      {order.status === "ok" ? "Mark Not OK" : "Mark OK"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable orders={orders} handleStatusChange={handleStatusChange} />
       )}
     </div>
   );

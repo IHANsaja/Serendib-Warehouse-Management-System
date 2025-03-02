@@ -4,10 +4,12 @@ import OrderForm from "../components/dataInput//OrderForm";
 
 const DataInputPG = () => {
   return (
-    <div className="container mx-auto p-4">
+    <>
       <Header />
-      <OrderForm />
-    </div>
+      <div className="container mx-auto p-4">
+        <OrderForm />
+      </div>
+    </>
   );
 };
 

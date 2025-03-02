@@ -9,7 +9,7 @@ const roles = [
 
 const RoleSelector = ({ role, setRole }) => {
   return (
-    <div className="role-selector">
+    <div className="role-selector w-full flex flex-row gap-1">
       {roles.map((r) => (
         <button
           key={r}

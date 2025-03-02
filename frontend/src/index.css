@@ -10,35 +10,30 @@
     --table-row-one: #FFD0C9;
     --table-row-two: #FFE7E3;
     --theme-white: #FEF4F3;
-    --highlight-color: #FFD0C9;
-    --secondary-color: #FFE7E3;
-    --background-light: #FEF4F3;
-    --background-dark: #6C1509;
 }
 
 /* Body Styles */
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: var(--background-light);
-    color: var(--background-dark);
+    background-color: var(--theme-white);
+    color: var(--darkest-red);
     margin: 0;
     padding: 0;
 }
 
-/* Input Fields */
 input, select, textarea {
-    background-color: var(--background-light);
-    color: var(--background-dark);
-    border: 1px solid var(--background-dark);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    width: 100%;
-    margin: 0.5rem 0;
+  background-color: var(--theme-white);
+  color: var(--darkest-red);
+  border: 1px solid var(--main-red);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  margin: 0.5rem 0;
 }
 
 input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--theme-yellow);
+  outline: none;
+  border-color: var(--theme-yellow);
 }
 
 /* Links */
@@ -54,7 +49,7 @@ a:hover {
 
 /* Card or Section Backgrounds */
 .card, .section {
-    background-color: var(--secondary-color);
+    background-color: var(--table-row-two);
     border-radius: 1rem;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -62,14 +57,14 @@ a:hover {
 
 /* Highlighted Elements */
 .highlight {
-    background-color: var(--highlight-color);
+    background-color: var(--table-row-one);
     padding: 1rem;
     border-radius: 0.5rem;
 }
 
 /* Navigation */
 .navbar {
-    background-color: var(--background-dark);
+    background-color: var(--darkest-red);
     color: white;
     padding: 1rem;
 }
@@ -88,7 +83,7 @@ a:hover {
 
 /* Footer Styles */
 footer {
-    background-color: var(--background-dark);
+    background-color: var(--darkest-red);
     color: white;
     padding: 1rem;
     text-align: center;
@@ -107,32 +102,10 @@ footer {
     background-color: var(--theme-yellow);
 }
 
-/* Custom Button Styles */
-.button-primary {
-    background-color: var(--main-red);
-    color: var(--theme-white);
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    transition: background-color 0.3s ease;
-}
-
-.button-primary:hover {
-    background-color: var(--darkest-red);
-}
-
-/* Fluid Text */
-.text-fluid {
-  font-size: clamp(1rem, 5vw, 2rem);
-}
-
 /* Progress Bar */
 @keyframes progressBarAnimation {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
+  0% { width: 0%; }
+  100% { width: 100%; }
 }
 
 .progress-bar {
@@ -141,38 +114,77 @@ footer {
 
 /* Component Styles */
 @layer components {
-    .btn-primary {
-      @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-lg px-4 py-2 shadow-lg 
-      transition-all duration-300 ease-in-out 
-      hover:bg-[var(--darkest-red)] hover:shadow-[0_0_15px_rgba(164,52,36,0.5)] 
-      active:brightness-90;
-    }
-    .btn-primary:disabled {
-      @apply bg-gray-400 text-gray-200 cursor-grab opacity-50
-      transition-all duration-300 ease-in-out;
-    }
-    .card-primary {
-      @apply bg-[var(--main-red)] rounded-lg p-4;
-    }
-    .header-head{
-      @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-lg px-4 py-2 shadow-lg;
-    }
-    .card-count{
-      @apply bg-[var(--theme-white)] rounded-lg shadow-md p-4;
-    }
-    .card-summary {
-      @apply bg-[#F9DEDC] rounded-lg p-4;
-    }
-    .table-header {
-      @apply bg-[var(--darkest-red)] text-[var(--theme-white)] text-center font-semibold;
-    }
-    .summary-span {
-      @apply text-[color:var(--theme-white)] bg-[var(--darkest-red)] flex justify-center items-center ml-2;
-    }
-    .AIdata-table{
-      @apply text-[color:var(--darkest-red)];
-    }
-    .bay-area{
-      @apply w-full bg-[var(--table-row-two)] text-[var(--darkest-red)] z-10 rounded-lg shadow-md p-4;
-    }    
+  .heading {
+    @apply text-white text-lg mb-5;
+  }
+  
+  .login-container {
+    @apply flex flex-col w-[700px] p-5 text-center border-4 border-[var(--table-row-one)] 
+           rounded-lg bg-[var(--main-red)] shadow-[0_5px_20px_rgba(0,0,0,0.5)];
+  }
+
+  .login-form {
+    @apply flex flex-col gap-2.5;
+  }
+
+  .input-container {
+    @apply p-2.5 bg-[var(--table-row-one)] w-full rounded-b-md;
+  }
+
+  input, select {
+    @apply p-2.5 bg-[var(--table-row-two)] border border-[var(--main-red)] text-[var(--darkest-red)] rounded-md;
+  }
+
+  .login-button {
+    @apply p-2.5 bg-[var(--table-row-two)] border-none text-[var(--darkest-red)] rounded-md;
+  }
+
+  .login {
+    @apply bg-[var(--theme-yellow)] text-[var(--main-red)] font-bold cursor-pointer text-base 
+           transition-all duration-300 ease-in-out hover:bg-[var(--theme-yellow)] 
+           hover:tracking-wider;
+  }
+
+  .role-selector {
+    @apply flex justify-center;
+  }
+
+  .role-button {
+    @apply border-none w-1/4 text-sm rounded-t-md bg-[var(--theme-white)] text-[var(--main-red)] 
+           cursor-pointer transition-all duration-300 p-2.5 font-bold;
+  }
+
+  .role-button:hover {
+    @apply bg-[var(--theme-white)] text-base;
+  }
+
+  .role-button.active {
+    @apply bg-[var(--table-row-one)] text-[var(--main-red)] text-base;
+  }
+
+  .header-head {
+    @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-lg px-4 py-2 shadow-md;
+  }
+  
+  .btn-primary {
+    @apply bg-[var(--main-red)] text-[var(--theme-white)] rounded-lg px-4 py-2 shadow-lg 
+           transition-all duration-300 ease-in-out 
+           hover:bg-[var(--darkest-red)] hover:shadow-[0_0_15px_rgba(164,52,36,0.5)] 
+           active:brightness-90;
+  }
+  .btn-primary:disabled {
+    @apply bg-gray-400 text-gray-200 cursor-grab opacity-50 transition-all duration-300 ease-in-out;
+  }
+  .table-header {
+    @apply bg-[var(--darkest-red)] text-[var(--theme-white)] text-center font-semibold;
+  }
+  .summary-span {
+    @apply text-[color:var(--theme-white)] bg-[var(--darkest-red)] flex justify-center items-center ml-2;
+  }
+  .AIdata-table {
+    @apply text-[color:var(--darkest-red)];
+  }
+  .bay-area {
+    @apply w-full bg-[var(--table-row-two)] text-[var(--darkest-red)] z-10 rounded-lg shadow-md p-4;
+  }
 }
