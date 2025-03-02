@@ -176,7 +176,7 @@ footer {
     @apply bg-gray-400 text-gray-200 cursor-grab opacity-50 transition-all duration-300 ease-in-out;
   }
   .table-header {
-    @apply bg-[var(--darkest-red)] text-[var(--theme-white)] text-center font-semibold;
+    @apply bg-[var(--main-red)] text-[var(--theme-white)] text-center font-semibold p-2;
   }
   .summary-span {
     @apply text-[color:var(--theme-white)] bg-[var(--darkest-red)] flex justify-center items-center ml-2;
@@ -186,5 +186,14 @@ footer {
   }
   .bay-area {
     @apply w-full bg-[var(--table-row-two)] text-[var(--darkest-red)] z-10 rounded-lg shadow-md p-4;
+  }
+  .card-primary {
+    @apply bg-[var(--main-red)] rounded-lg;
+  }
+  .card-count {
+    @apply bg-[var(--theme-white)] rounded-lg shadow-lg p-4;
+  }
+  .card-summary {
+    @apply bg-[var(--table-row-one)] rounded-lg p-4;
   }
 }
