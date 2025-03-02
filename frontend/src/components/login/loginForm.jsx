@@ -51,7 +51,7 @@ const LoginForm = ({ role, onLogin }) => {
       </div>
       <button
         type="submit"
-        className="w-full py-3 bg-[var(--theme-yellow)] text-[var(--main-red)] font-semibold rounded-lg shadow-md transition-all duration-300 ease-in-out hover:bg-[#f9c046] hover:shadow-lg active:scale-95"
+        className="w-full py-3 cursor-pointer bg-[var(--theme-yellow)] text-[var(--main-red)] font-semibold rounded-lg shadow-md transition-all duration-300 ease-in-out hover:bg-[#f9c046] hover:shadow-lg active:scale-95"
       >
         Login
       </button>
