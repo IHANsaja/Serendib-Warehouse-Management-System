@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import LoginForm from "../components/login/LoginForm.jsx";
+import LoginForm from "../components/login/loginForm.jsx";
 import RoleSelector from "../components/login/RoleSelector.jsx";
 
 const LoginPG = ({ setRole }) => {
