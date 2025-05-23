@@ -5,8 +5,10 @@ import RoleSelector from "../components/login/RoleSelector.jsx";
 const LoginPG = ({ setRole }) => {
   const [role, setLocalRole] = useState("Administrator");
 
-  const handleLogin = () => {
+  const handleLogin = (user) => {
+    console.log("User logged in:", user);
     setRole(role);
+    
   };
 
   return (
