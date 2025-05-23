@@ -1,8 +1,8 @@
-import cameraView from "../../assets/Camerafeed.png";
+import CameraFeed from "./LiveCameraFeed";
 
 const AICameraView = () => (
-  <div className="card-primary flex justify-center items-center">
-    <img src={cameraView} alt="AI Camera View" className="rounded-xl w-full h-full p-4" />
+  <div className="card-primary flex justify-center items-center h-full w-full">
+    <CameraFeed />
   </div>
 );
 
