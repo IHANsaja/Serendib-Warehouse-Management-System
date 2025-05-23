@@ -10,7 +10,8 @@ CREATE TABLE EMPLOYEE (
     EmployeeID INT PRIMARY KEY,
     Name VARCHAR(255),
     Role ENUM('SE', 'EO', 'IO', 'OM'),
-    ContactInfo VARCHAR(255)
+    ContactInfo VARCHAR(255),
+    Password VARCHAR(255)
 );
 
 -- ORDER
