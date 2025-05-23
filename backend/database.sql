@@ -9,11 +9,12 @@ CREATE TABLE COMPANY (
 CREATE TABLE EMPLOYEE (
     EmployeeID INT PRIMARY KEY,
     Name VARCHAR(255),
-    Role ENUM('SE', 'EO', 'IO', 'OM'),
+    Role ENUM('Administrator', 'Executive', 'Senior Officer', 'Inventory Officer'),
     ContactInfo VARCHAR(255),
     Password VARCHAR(255)
 );
 
+INSERT INTO EMPLOYEE VALUES (1001, 'TestUser', 'Administrator', '0771234567', '123456');
 -- ORDER
 CREATE TABLE `ORDER` (
     OrderID INT PRIMARY KEY,
