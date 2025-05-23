@@ -26,7 +26,7 @@ const CameraFeed = () => {
 
   return (
     <>
-      <video ref={videoRef} autoPlay playsInline style={{ transform: 'scaleX(-1)' }} width="100%" className="rounded-md w-full h-full" />
+      <video ref={videoRef} autoPlay playsInline style={{ transform: 'scaleX(-1)' }} width="100%" className="rounded-md w-full h-full p-6" />
     </>
   );
 };
