@@ -1,0 +1,8 @@
+{
+    "totalSacks": 600,
+    "sacksWithoutErrors": 498,
+    "overlappingSackPairs": 1,
+    "positionsOfOverlappingSackPairs": "20, 21",
+    "aiModelCount": 500
+  }
+  

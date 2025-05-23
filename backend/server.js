@@ -32,6 +32,9 @@ app.listen(5000, () => {
 });
 
 const authRoutes = require('./routes/authRoutes');
+const aiDataRoutes = require('./routes/aidataroutes');
+
 app.use('/api/auth', authRoutes);
+app.use('/api/aidata', aiDataRoutes);
 
 module.exports = db;
