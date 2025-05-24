@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import data from './summaryData.json';
 
 function AIcount() {
-  const totalStacks = 500;
+  const totalStacks = data.totalSacks;
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {

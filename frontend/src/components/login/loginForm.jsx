@@ -4,11 +4,32 @@ const LoginForm = ({ role, onLogin }) => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Logging in as:", role, username);
-    onLogin(); // Trigger login function
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: username, password, role }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Login successful:", data);
+        onLogin(); // Ensure onLogin is passed as prop
+      } else {
+        alert(data.error); // shows backend error message
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+    }
   };
+
 
   return (
     <form
