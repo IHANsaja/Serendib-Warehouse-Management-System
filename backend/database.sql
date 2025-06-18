@@ -27,6 +27,11 @@ CREATE TABLE `ORDER` (
     ProductName VARCHAR(255),
     QtyOrdered INT,
     CompanyID INT,
+    CustomerName VARCHAR(255),
+    ItemCode VARCHAR(255),
+    VehicleNo VARCHAR(150),
+    Date DATE,
+    Type VARCHAR(150),
     FOREIGN KEY (CompanyID) REFERENCES COMPANY(CompanyID)
 );
 
