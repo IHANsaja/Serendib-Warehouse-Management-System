@@ -9,12 +9,18 @@ CREATE TABLE COMPANY (
 CREATE TABLE EMPLOYEE (
     EmployeeID INT PRIMARY KEY,
     Name VARCHAR(255),
-    Role ENUM('Administrator', 'Executive', 'Senior Officer', 'Inventory Officer'),
+    Role ENUM('Administrator', 'Executive', 'Security Officer', 'Inventory Officer'),
     ContactInfo VARCHAR(255),
     Password VARCHAR(255)
 );
 
 INSERT INTO EMPLOYEE VALUES (1001, 'TestUser', 'Administrator', '0771234567', '123456');
+
+INSERT INTO EMPLOYEE VALUES (1002, 'Jane Doe', 'Executive', 'jane.doe@example.com', 'execpassword');
+INSERT INTO EMPLOYEE VALUES (1003, 'John Smith', 'Security Officer', '0719876543', 'senpassword');
+INSERT INTO EMPLOYEE VALUES (1004, 'Alice Brown', 'Inventory Officer', 'alice.b@example.com', 'invenpassword');
+
+
 -- ORDER
 CREATE TABLE `ORDER` (
     OrderID INT PRIMARY KEY,
