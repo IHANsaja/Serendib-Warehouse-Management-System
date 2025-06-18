@@ -14,6 +14,7 @@ const LoginForm = ({ role, onLogin }) => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", //Send cookies
         body: JSON.stringify({ name: username, password, role }),
       });
 
@@ -21,7 +22,7 @@ const LoginForm = ({ role, onLogin }) => {
 
       if (response.ok) {
         console.log("Login successful:", data);
-        onLogin(); // Ensure onLogin is passed as prop
+        onLogin(data.user); // Ensure onLogin is passed as prop
       } else {
         alert(data.error); // shows backend error message
       }

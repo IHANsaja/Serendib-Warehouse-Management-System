@@ -23,9 +23,35 @@ router.post('/login', (req, res) => {
             return res.status(401).json({ error: 'Incorrect password' });
         }
 
-        res.status(200).json({ message: 'Login Successful', user });
+        //Session storing
+        req.session.user = {
+            id: user.EmployeeID,
+            name: user.Name,
+            role: user.Role
+        };
+
+        res.status(200).json({ message: 'Login Successful', user: req.session.user });
     });
 });
 
+
+//Check for sessions
+router.get('/session', (req, res) => {
+    if (req.session.user) {
+        res.json({ loggedIn: true, user: req.session.user });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+
+
+// Logout route
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) return res.status(500).json({ error: 'Logout failed' });
+        res.clearCookie('connect.sid'); // Default cookie name
+        res.json({ message: 'Logged out successfully' });
+    });
+});
 
 module.exports = router;

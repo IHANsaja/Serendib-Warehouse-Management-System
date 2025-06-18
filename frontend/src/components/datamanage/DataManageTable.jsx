@@ -1,8 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const DataManageTable = () => {
   const [activeTab, setActiveTab] = useState("loading");
+  const [data, setData] = useState([]);
   const [timestamps, setTimestamps] = useState({});
+
+  // Fetch orders based on tab (loading/unloading)
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/order?type=${activeTab}`, {
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched order data:", data);
+        setData(data);
+        setTimestamps({}); // Reset timestamps for new data
+      })
+      .catch((err) => {
+        console.error("Failed to fetch orders:", err);
+      });
+  }, [activeTab]);
 
   const handleArrival = (id) => {
     const currentTime = new Date().toLocaleTimeString();
@@ -20,11 +37,11 @@ const DataManageTable = () => {
     }));
   };
 
-  const data = [
-    { id: "P2009", quantity: "500KG", vehicle: "LP-2056", org: "JAY KAY", date: "2025/02/09" },
-    { id: "P2006", quantity: "800KG", vehicle: "LP-2056", org: "MIMN", date: "2025/02/09" },
-    { id: "P2011", quantity: "300KG", vehicle: "LP-2056", org: "Harischandra", date: "2025/02/09" },
-  ];
+  // const data = [
+  //   { id: "P2009", quantity: "500KG", vehicle: "LP-2056", org: "JAY KAY", date: "2025/02/09" },
+  //   { id: "P2006", quantity: "800KG", vehicle: "LP-2056", org: "MIMN", date: "2025/02/09" },
+  //   { id: "P2011", quantity: "300KG", vehicle: "LP-2056", org: "Harischandra", date: "2025/02/09" },
+  // ];
 
   return (
     <div className="bg-[var(--table-row-two)] font-[Noto Sans Sinhala] w-full flex flex-col items-center">
@@ -65,22 +82,22 @@ const DataManageTable = () => {
         </thead>
         <tbody>
           {data.map((item, index) => (
-            <tr key={item.id} className={index % 2 === 0 ? "bg-[var(--table-row-two)]" : "bg-[var(--table-row-one)]"}>
-              <td className="p-3">{item.id}</td>
-              <td className="p-3">{item.quantity}</td>
-              <td className="p-3">{item.vehicle}</td>
-              <td className="p-3">{item.org}</td>
-              <td className="p-3">{item.date}</td>
+            <tr key={item.ItemCode} className={index % 2 === 0 ? "bg-[var(--table-row-two)]" : "bg-[var(--table-row-one)]"}>
+              <td className="p-3">{item.ItemCode}</td>
+              <td className="p-3">{item.QtyOrdered}</td>
+              <td className="p-3">{item.VehicleNo}</td>
+              <td className="p-3">{item.CustomerName}</td>
+              <td className="p-3">{new Date(item.Date).toISOString().slice(0, 10)}</td>
               <td className="p-3">
-                <input type="checkbox" className="accent-[var(--main-red)] cursor-pointer" onChange={() => handleArrival(item.id)} checked={!!timestamps[item.id]?.arrival} />
+                <input type="checkbox" className="accent-[var(--main-red)] cursor-pointer" onChange={() => handleArrival(item.ItemCode)} checked={!!timestamps[item.ItemCode]?.arrival} />
               </td>
-              <td className="p-3">{timestamps[item.id]?.arrival || "-"}</td>
+              <td className="p-3">{timestamps[item.ItemCode]?.arrival || "-"}</td>
               <td className="p-3">
-                {timestamps[item.id]?.arrival && (
-                  <input type="checkbox" className="accent-[var(--main-red)] cursor-pointer" onChange={() => handleExit(item.id)} checked={!!timestamps[item.id]?.exit} />
+                {timestamps[item.ItemCode]?.arrival && (
+                  <input type="checkbox" className="accent-[var(--main-red)] cursor-pointer" onChange={() => handleExit(item.ItemCode)} checked={!!timestamps[item.ItemCode]?.exit} />
                 )}
               </td>
-              <td className="p-3">{timestamps[item.id]?.exit || "-"}</td>
+              <td className="p-3">{timestamps[item.ItemCode]?.exit || "-"}</td>
             </tr>
           ))}
         </tbody>
