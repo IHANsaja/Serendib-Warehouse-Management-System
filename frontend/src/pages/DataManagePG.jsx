@@ -6,7 +6,7 @@ const DataManagePG = () => {
     <div>
         <ManageHeader />
         <div className="mx-6 my-6">
-            <DataManageTable />
+            <DataManageTable role="Security Officer"/>
         </div>
     </div>
   );
