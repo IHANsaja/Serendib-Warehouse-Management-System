@@ -48,7 +48,7 @@ const LoginForm = ({ role, onLogin }) => {
         />
         <label
           htmlFor="username"
-          className="absolute cursor-text left-3 top-3 text-[var(--main-red)] transition-all transform -translate-y-1/2 scale-100 origin-top-left bg-white px-1 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:opacity-70 peer-placeholder-shown:text-[var(--main-red)] peer-focus:top-2 peer-focus:opacity-100 peer-focus:text-sm peer-focus:text-[var(--main-red)]"
+          className="absolute cursor-text left-3 top-3 text-[var(--main-red)] transition-all transform -translate-y-1/2 scale-100 origin-top-left bg-[#FEF4F3] px-1 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:opacity-70 peer-placeholder-shown:text-[var(--main-red)] peer-focus:top-2 peer-focus:opacity-100 peer-focus:text-sm peer-focus:text-[var(--main-red)]"
         >
           Username
         </label>
@@ -65,7 +65,7 @@ const LoginForm = ({ role, onLogin }) => {
         />
         <label
           htmlFor="password"
-          className="absolute cursor-text left-3 top-3 text-[var(--main-red)] transition-all transform -translate-y-1/2 scale-100 origin-top-left bg-white px-1 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:opacity-70 peer-placeholder-shown:text-[var(--main-red)] peer-focus:top-2 peer-focus:opacity-100 peer-focus:text-sm peer-focus:text-[var(--main-red)]"
+          className="absolute cursor-text left-3 top-3 text-[var(--main-red)] transition-all transform -translate-y-1/2 scale-100 origin-top-left bg-[#FEF4F3] px-1 peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-base peer-placeholder-shown:opacity-70 peer-placeholder-shown:text-[var(--main-red)] peer-focus:top-2 peer-focus:opacity-100 peer-focus:text-sm peer-focus:text-[var(--main-red)]"
         >
           Password
         </label>
