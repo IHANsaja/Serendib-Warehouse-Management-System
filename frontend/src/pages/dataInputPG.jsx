@@ -24,7 +24,7 @@ const DataInputPG = () => {
 
           <div className="mt-4">
             {selectedComponent === "OrderForm" && <OrderForm />}
-            {selectedComponent === "DataManageForm" && <DataManageForm />}
+            {selectedComponent === "DataManageForm" && <DataManageForm role="Executive Officer"/>}
           </div>
         </div>
       </div>

@@ -1,30 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const DataManageTable = () => {
+const DataManageTable = ({role}) => {
   const [activeTab, setActiveTab] = useState("loading");
+  const [data, setData] = useState([]);
   const [timestamps, setTimestamps] = useState({});
 
-  const handleArrival = (id) => {
+  // Fetch orders based on tab (loading/unloading)
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/order?type=${activeTab}`, {
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched order data:", data);
+        setData(data);
+        setTimestamps({}); // Reset timestamps for new data
+      })
+      .catch((err) => {
+        console.error("Failed to fetch orders:", err);
+      });
+  }, [activeTab]);
+
+  const isSecurity = role === "Security Officer";
+  const isExecutive = role === "Executive Officer";
+
+  const setTime = (id, field) => {
     const currentTime = new Date().toLocaleTimeString();
-    setTimestamps((prev) => ({
-      ...prev,
-      [id]: { arrival: currentTime, exit: "" },
-    }));
+
+    setTimestamps((prev) => {
+      const updated = { ...prev[id] };
+
+      if (field === "arrival") {
+        // Reset exit when arrival is checked
+        return {
+          ...prev,
+          [id]: {
+            arrival: currentTime,
+            exit: "",
+          },
+        };
+      }
+
+      if (field === "bayIn") {
+        // Reset bayOut when bayIn is checked
+        return {
+          ...prev,
+          [id]: {
+            bayIn: currentTime,
+            bayOut: "",
+          },
+        };
+      }
+
+      // Default behavior for exit or bayOut
+      return {
+        ...prev,
+        [id]: {
+          ...updated,
+          [field]: currentTime,
+        },
+      };
+    });
   };
 
-  const handleExit = (id) => {
-    const currentTime = new Date().toLocaleTimeString();
-    setTimestamps((prev) => ({
-      ...prev,
-      [id]: { ...prev[id], exit: currentTime },
-    }));
-  };
 
-  const data = [
-    { id: "P2009", quantity: "500KG", vehicle: "LP-2056", org: "JAY KAY", date: "2025/02/09" },
-    { id: "P2006", quantity: "800KG", vehicle: "LP-2056", org: "MIMN", date: "2025/02/09" },
-    { id: "P2011", quantity: "300KG", vehicle: "LP-2056", org: "Harischandra", date: "2025/02/09" },
-  ];
+  // const data = [
+  //   { id: "P2009", quantity: "500KG", vehicle: "LP-2056", org: "JAY KAY", date: "2025/02/09" },
+  //   { id: "P2006", quantity: "800KG", vehicle: "LP-2056", org: "MIMN", date: "2025/02/09" },
+  //   { id: "P2011", quantity: "300KG", vehicle: "LP-2056", org: "Harischandra", date: "2025/02/09" },
+  // ];
 
   return (
     <div className="bg-[var(--table-row-two)] font-[Noto Sans Sinhala] w-full flex flex-col items-center">
@@ -57,30 +101,101 @@ const DataManageTable = () => {
             <th className="p-3">Vehicle Number</th>
             <th className="p-3">Organization</th>
             <th className="p-3">Order Date</th>
-            <th className="p-3">✔ Arrival</th>
-            <th className="p-3">Arrival Time</th>
-            <th className="p-3">✔ Exit</th>
-            <th className="p-3">Exit Time</th>
+
+            {isSecurity && (
+              <>
+                <th className="p-3">✔ Arrival</th>
+                <th className="p-3">Arrival Time</th>
+                <th className="p-3">✔ Exit</th>
+                <th className="p-3">Exit Time</th>
+              </>
+            )}
+            {isExecutive && (
+              <>
+                <th className="p-3">Bay Number</th>
+                <th className="p-3">✔ Bay-In</th>
+                <th className="p-3">Bay-In Time</th>
+                <th className="p-3">✔ Bay-Out</th>
+                <th className="p-3">Bay-Out Time</th>
+              </>
+            )}
+
           </tr>
         </thead>
         <tbody>
           {data.map((item, index) => (
-            <tr key={item.id} className={index % 2 === 0 ? "bg-[var(--table-row-two)]" : "bg-[var(--table-row-one)]"}>
-              <td className="p-3">{item.id}</td>
-              <td className="p-3">{item.quantity}</td>
-              <td className="p-3">{item.vehicle}</td>
-              <td className="p-3">{item.org}</td>
-              <td className="p-3">{item.date}</td>
-              <td className="p-3">
-                <input type="checkbox" className="accent-[var(--main-red)] cursor-pointer" onChange={() => handleArrival(item.id)} checked={!!timestamps[item.id]?.arrival} />
-              </td>
-              <td className="p-3">{timestamps[item.id]?.arrival || "-"}</td>
-              <td className="p-3">
-                {timestamps[item.id]?.arrival && (
-                  <input type="checkbox" className="accent-[var(--main-red)] cursor-pointer" onChange={() => handleExit(item.id)} checked={!!timestamps[item.id]?.exit} />
-                )}
-              </td>
-              <td className="p-3">{timestamps[item.id]?.exit || "-"}</td>
+            <tr key={item.ItemCode} className={index % 2 === 0 ? "bg-[var(--table-row-two)]" : "bg-[var(--table-row-one)]"}>
+              <td className="p-3">{item.ItemCode}</td>
+              <td className="p-3">{item.QtyOrdered}</td>
+              <td className="p-3">{item.VehicleNo}</td>
+              <td className="p-3">{item.CustomerName}</td>
+              <td className="p-3">{new Date(item.Date).toISOString().slice(0, 10)}</td>
+
+              {isSecurity && (
+                <>
+                  <td className="p-3">
+                    <input
+                      type="checkbox"
+                      className="accent-[var(--main-red)] cursor-pointer"
+                      onChange={() => setTime(item.ItemCode, "arrival")}
+                      checked={!!timestamps[item.ItemCode]?.arrival}
+                    />
+                  </td>
+                  <td className="p-3">
+                    {timestamps[item.ItemCode]?.arrival || "-"}
+                  </td>
+                  <td className="p-3">
+                    {timestamps[item.ItemCode]?.arrival && (
+                      <input
+                        type="checkbox"
+                        className="accent-[var(--main-red)] cursor-pointer"
+                        onChange={() => setTime(item.ItemCode, "exit")}
+                        checked={!!timestamps[item.ItemCode]?.exit}
+                      />
+                    )}
+                  </td>
+                  <td className="p-3">
+                    {timestamps[item.ItemCode]?.exit || "-"}
+                  </td>
+                </>
+              )}
+
+              {isExecutive && (
+                <>
+                  <td className="p-3">
+                    <select name="baynumber" id="baynumber">
+                      <option value="Bay 01">Bay 01</option>
+                      <option value="Bay 02">Bay 02</option>
+                      <option value="Bay 03">Bay 03</option>
+                    </select>
+                  </td>
+                  <td className="p-3">
+                    <input
+                      type="checkbox"
+                      className="accent-[var(--main-red)] cursor-pointer"
+                      onChange={() => setTime(item.ItemCode, "bayIn")}
+                      checked={!!timestamps[item.ItemCode]?.bayIn}
+                    />
+                  </td>
+                  <td className="p-3">
+                    {timestamps[item.ItemCode]?.bayIn || "-"}
+                  </td>
+                  <td className="p-3">
+                    {timestamps[item.ItemCode]?.bayIn && (
+                      <input
+                        type="checkbox"
+                        className="accent-[var(--main-red)] cursor-pointer"
+                        onChange={() => setTime(item.ItemCode, "bayOut")}
+                        checked={!!timestamps[item.ItemCode]?.bayOut}
+                      />
+                    )}
+                  </td>
+                  <td className="p-3">
+                    {timestamps[item.ItemCode]?.bayOut || "-"}
+                  </td>
+                </>
+              )}
+
             </tr>
           ))}
         </tbody>
