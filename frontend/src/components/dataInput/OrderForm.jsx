@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DataTable from "../dataInput/dataTable.jsx";
+import axios from 'axios';
 
 const OrderForm = () => {
   const [formData, setFormData] = useState({
@@ -20,20 +21,37 @@ const OrderForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setOrders([...orders, { ...formData, id: Date.now(), status: "pending" }]);
-    setFormData({
-      CustomerName: "",
-      OrderNo: "",
-      ItemCode: "",
-      Quantity: "",
-      Item: "",
-      VehicleNo: "",
-      Date: "",
-      Type: "loading",
+    try {
+      const response = await axios.post('http://localhost:5000/api/order', {
+        OrderID: formData.OrderNo,
+        ProductName: formData.Item,
+        QtyOrdered: formData.Quantity,
+        CustomerName: formData.CustomerName,
+        ItemCode: formData.ItemCode,
+        VehicleNo: formData.VehicleNo,
+        Date: formData.Date,
+        Type: formData.Type,
+      });
+
+      alert(response.data.message);
+
+      // Reset form fields after successful submission
+      setFormData({
+        CustomerName: "",
+        OrderNo: "",
+        ItemCode: "",
+        Quantity: "",
+        Item: "",
+        VehicleNo: "",
+        Date: "",
+        Type: "loading", // default back to "loading"
     });
-    alert("Form submitted successfully!");
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.error || 'Something went wrong');
+    }
   };
 
   const handleStatusChange = (id) => {

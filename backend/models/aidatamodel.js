@@ -1,8 +1,8 @@
-const db = require('../server');
+const db = require('../config/db');
 
 exports.insertVerification = (data, callback) => {
   const sql = `
-    INSERT INTO COUNTERVERIFICATION 
+    INSERT INTO counterverification 
     (ManualCount, AICount, SacksNoError, OverlapPairs, OverlapPositions, VerifTime, VisitID, IO_ID)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
