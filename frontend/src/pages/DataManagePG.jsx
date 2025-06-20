@@ -1,15 +1,15 @@
-// src/pages/DataManagePG.jsx
+import React from "react";
 import ManageHeader from "../components/datamanage/ManageHeader";
-import { Outlet } from "react-router-dom";
 
-const DataManagePG = () => {
+const DataManagePG = ({ children }) => {
   return (
-    <div className="flex">
-      <div className="ml-16 md:ml-60 w-full">
-        <ManageHeader />
-        <div className="mx-4 md:mx-6 my-4 md:my-6">
-          <Outlet />
-        </div>
+    <div className="w-full min-h-screen bg-[#FEF4F3]">
+      {/* Full‑width header */}
+      <ManageHeader />
+
+      {/* Centered content container */}
+      <div className="max-w-6xl mx-auto px-4 md:px-6 py-6">
+        {children}
       </div>
     </div>
   );

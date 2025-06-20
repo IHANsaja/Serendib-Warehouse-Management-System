@@ -1,9 +1,9 @@
-// src/components/datamanage/DataManageTable.jsx
 import { useState, useEffect } from "react";
 
 const DataManageTable = ({ role, type }) => {
   const [data, setData] = useState([]);
   const [timestamps, setTimestamps] = useState({});
+  const [baySelections, setBaySelections] = useState({});
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/order?type=${type}`, {
@@ -11,180 +11,149 @@ const DataManageTable = ({ role, type }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Fetched order data:", data);
         setData(data);
         setTimestamps({});
+        setBaySelections({});
       })
-      .catch((err) => {
-        console.error("Failed to fetch orders:", err);
-      });
+      .catch(console.error);
   }, [type]);
 
   const isSecurity = role === "Security Officer";
   const isExecutive = role === "Executive Officer";
 
-  const setTime = (id, field) => {
-    const currentTime = new Date().toLocaleTimeString();
+  const formatTime = () =>
+    new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
+  const setTime = (id, field) =>
     setTimestamps((prev) => {
-      const updated = { ...prev[id] };
-
+      const curr = prev[id] || {};
+      const now = formatTime();
       if (field === "arrival") {
-        return {
-          ...prev,
-          [id]: {
-            arrival: currentTime,
-            exit: "",
-          },
-        };
+        return { ...prev, [id]: { ...curr, arrival: now, exit: "" } };
       }
-
       if (field === "bayIn") {
-        return {
-          ...prev,
-          [id]: {
-            bayIn: currentTime,
-            bayOut: "",
-          },
-        };
+        return { ...prev, [id]: { ...curr, bayIn: now, bayOut: "" } };
       }
-
-      return {
-        ...prev,
-        [id]: {
-          ...updated,
-          [field]: currentTime,
-        },
-      };
+      return { ...prev, [id]: { ...curr, [field]: now } };
     });
-  };
+
+  const handleBaySelect = (id, val) =>
+    setBaySelections((prev) => ({ ...prev, [id]: val }));
 
   return (
-    <div className="w-full overflow-x-auto bg-[var(--table-row-two)] font-[Noto Sans Sinhala] p-4 md:p-6">
-      <h2 className="text-[var(--darkest-red)] mb-4 text-xl md:text-2xl font-bold">
-        {type === "loading"
-          ? "පැටවුම්වලට අදාළ විස්තර"
-          : "බැවුම්වලට අදාළ විස්තර"}
-      </h2>
-
-      <table className="w-full min-w-[900px] text-center">
-        <thead>
-          <tr className="bg-[var(--main-red)] text-[var(--theme-white)]">
-            <th className="p-2 md:p-3">Product ID</th>
-            <th className="p-2 md:p-3">Quantity</th>
-            <th className="p-2 md:p-3">Vehicle Number</th>
-            <th className="p-2 md:p-3">Organization</th>
-            <th className="p-2 md:p-3">Order Date</th>
-
-            {isSecurity && (
-              <>
-                <th className="p-2 md:p-3">✔ Arrival</th>
-                <th className="p-2 md:p-3">Arrival Time</th>
-                <th className="p-2 md:p-3">✔ Exit</th>
-                <th className="p-2 md:p-3">Exit Time</th>
-              </>
-            )}
-            {isExecutive && (
-              <>
-                <th className="p-2 md:p-3">Bay Number</th>
-                <th className="p-2 md:p-3">✔ Bay-In</th>
-                <th className="p-2 md:p-3">Bay-In Time</th>
-                <th className="p-2 md:p-3">✔ Bay-Out</th>
-                <th className="p-2 md:p-3">Bay-Out Time</th>
-              </>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr
-              key={item.ItemCode}
-              className={
-                index % 2 === 0
-                  ? "bg-[var(--table-row-two)]"
-                  : "bg-[var(--table-row-one)]"
-              }
-            >
-              <td className="p-2 md:p-3">{item.ItemCode}</td>
-              <td className="p-2 md:p-3">{item.QtyOrdered}</td>
-              <td className="p-2 md:p-3">{item.VehicleNo}</td>
-              <td className="p-2 md:p-3">{item.CustomerName}</td>
-              <td className="p-2 md:p-3">
-                {new Date(item.Date).toISOString().slice(0, 10)}
-              </td>
-
-              {isSecurity && (
-                <>
-                  <td className="p-2 md:p-3">
-                    <input
-                      type="checkbox"
-                      className="accent-[var(--main-red)] cursor-pointer"
-                      onChange={() => setTime(item.ItemCode, "arrival")}
-                      checked={!!timestamps[item.ItemCode]?.arrival}
-                    />
-                  </td>
-                  <td className="p-2 md:p-3">
-                    {timestamps[item.ItemCode]?.arrival || "-"}
-                  </td>
-                  <td className="p-2 md:p-3">
-                    {timestamps[item.ItemCode]?.arrival && (
-                      <input
-                        type="checkbox"
-                        className="accent-[var(--main-red)] cursor-pointer"
-                        onChange={() => setTime(item.ItemCode, "exit")}
-                        checked={!!timestamps[item.ItemCode]?.exit}
-                      />
+    <div className="w-full overflow-x-auto bg-white p-4">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-2xl font-bold text-[#6C1509] mb-4">
+          {type === "loading"
+            ? "පැටවුම්වලට අදාළ විස්තර"
+            : "බැවුම්වලට අදාළ විස්තර"}
+        </h2>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px] text-center border-collapse">
+            <thead className="sticky top-0 bg-[#A43424] text-white">
+              <tr>
+                <th className="p-2">Product ID</th>
+                <th className="p-2">Quantity</th>
+                <th className="p-2">Vehicle Number</th>
+                <th className="p-2">Organization</th>
+                <th className="p-2">Order Date</th>
+                {isSecurity && (
+                  <>
+                    <th className="p-2">✔ Arrival</th>
+                    <th className="p-2">Arrival Time</th>
+                    <th className="p-2">✔ Exit</th>
+                    <th className="p-2">Exit Time</th>
+                  </>
+                )}
+                {isExecutive && (
+                  <>
+                    <th className="p-2">Bay Number</th>
+                    <th className="p-2">✔ Bay-In</th>
+                    <th className="p-2">Bay-In Time</th>
+                    <th className="p-2">✔ Bay-Out</th>
+                    <th className="p-2">Bay-Out Time</th>
+                  </>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, i) => {
+                const ts = timestamps[item.ItemCode] || {};
+                const bg = i % 2 ? "bg-gray-50" : "bg-white";
+                return (
+                  <tr key={item.ItemCode} className={bg}>
+                    <td className="p-2">{item.ItemCode}</td>
+                    <td className="p-2">{item.QtyOrdered}</td>
+                    <td className="p-2">{item.VehicleNo}</td>
+                    <td className="p-2">{item.CustomerName}</td>
+                    <td className="p-2">
+                      {new Date(item.Date).toISOString().slice(0, 10)}
+                    </td>
+                    {isSecurity && (
+                      <>
+                        <td className="p-2">
+                          <input
+                            type="checkbox"
+                            onChange={() => setTime(item.ItemCode, "arrival")}
+                            checked={!!ts.arrival}
+                          />
+                        </td>
+                        <td className="p-2">{ts.arrival || "-"}</td>
+                        <td className="p-2">
+                          {ts.arrival && (
+                            <input
+                              type="checkbox"
+                              onChange={() => setTime(item.ItemCode, "exit")}
+                              checked={!!ts.exit}
+                            />
+                          )}
+                        </td>
+                        <td className="p-2">{ts.exit || "-"}</td>
+                      </>
                     )}
-                  </td>
-                  <td className="p-2 md:p-3">
-                    {timestamps[item.ItemCode]?.exit || "-"}
-                  </td>
-                </>
-              )}
-
-              {isExecutive && (
-                <>
-                  <td className="p-2 md:p-3">
-                    <select
-                      name="baynumber"
-                      id="baynumber"
-                      className="text-sm md:text-base"
-                    >
-                      <option value="Bay 01">Bay 01</option>
-                      <option value="Bay 02">Bay 02</option>
-                      <option value="Bay 03">Bay 03</option>
-                    </select>
-                  </td>
-                  <td className="p-2 md:p-3">
-                    <input
-                      type="checkbox"
-                      className="accent-[var(--main-red)] cursor-pointer"
-                      onChange={() => setTime(item.ItemCode, "bayIn")}
-                      checked={!!timestamps[item.ItemCode]?.bayIn}
-                    />
-                  </td>
-                  <td className="p-2 md:p-3">
-                    {timestamps[item.ItemCode]?.bayIn || "-"}
-                  </td>
-                  <td className="p-2 md:p-3">
-                    {timestamps[item.ItemCode]?.bayIn && (
-                      <input
-                        type="checkbox"
-                        className="accent-[var(--main-red)] cursor-pointer"
-                        onChange={() => setTime(item.ItemCode, "bayOut")}
-                        checked={!!timestamps[item.ItemCode]?.bayOut}
-                      />
+                    {isExecutive && (
+                      <>
+                        <td className="p-2">
+                          <select
+                            value={baySelections[item.ItemCode] || "Bay 01"}
+                            onChange={(e) =>
+                              handleBaySelect(item.ItemCode, e.target.value)
+                            }
+                          >
+                            <option>Bay 01</option>
+                            <option>Bay 02</option>
+                            <option>Bay 03</option>
+                          </select>
+                        </td>
+                        <td className="p-2">
+                          <input
+                            type="checkbox"
+                            onChange={() => setTime(item.ItemCode, "bayIn")}
+                            checked={!!ts.bayIn}
+                          />
+                        </td>
+                        <td className="p-2">{ts.bayIn || "-"}</td>
+                        <td className="p-2">
+                          {ts.bayIn && (
+                            <input
+                              type="checkbox"
+                              onChange={() =>
+                                setTime(item.ItemCode, "bayOut")
+                              }
+                              checked={!!ts.bayOut}
+                            />
+                          )}
+                        </td>
+                        <td className="p-2">{ts.bayOut || "-"}</td>
+                      </>
                     )}
-                  </td>
-                  <td className="p-2 md:p-3">
-                    {timestamps[item.ItemCode]?.bayOut || "-"}
-                  </td>
-                </>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
