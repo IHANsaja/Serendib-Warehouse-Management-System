@@ -102,8 +102,6 @@ const SummaryCard = () => {
         const { x, y, width, height, class: label, confidence } = pred;
         drawCtx.strokeStyle = "#A43424";
         drawCtx.lineWidth = 2;
-        drawCtx.strokeRect(x - width / 2, y - height / 2, width, height);
-        drawCtx.fillStyle = "#A43424";
         drawCtx.font = "16px Arial";
         drawCtx.fillText(
           `${label} (${(confidence * 100).toFixed(1)}%)`,
