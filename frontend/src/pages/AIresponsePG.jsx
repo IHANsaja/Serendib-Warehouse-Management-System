@@ -1,4 +1,4 @@
-import React from "react";
+// src/pages/AIresponsePG.jsx
 import AIHeader from "../components/AImodel/AIHeader";
 import AICameraView from "../components/AImodel/AICameraView";
 import AIStackSummary from "../components/AImodel/AIStackSummary";

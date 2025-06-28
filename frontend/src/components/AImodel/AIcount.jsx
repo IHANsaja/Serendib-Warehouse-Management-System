@@ -1,3 +1,4 @@
+//src/components/AImodel/AIcount.jsx
 import { useEffect, useState } from "react";
 import data from './summaryData.json';
 

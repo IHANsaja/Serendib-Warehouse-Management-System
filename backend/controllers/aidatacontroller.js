@@ -1,29 +1,24 @@
-const AIdataModel = require('../models/aidatamodel');
+// File: src/controllers/aidatacontroller.js
+const { insertVerification, getAllVerifications } = require('../models/aidatamodel');
 
-exports.saveAICount = (req, res) => {
-  const {
-    ManualCount,
-    AICount,
-    SacksNoError,
-    OverlapPairs,
-    OverlapPositions,
-    VisitID,
-    IO_ID
-  } = req.body;
-
-  const VerifTime = new Date();
-
-  AIdataModel.insertVerification({
-    ManualCount,
-    AICount,
-    SacksNoError,
-    OverlapPairs,
-    OverlapPositions,
-    VerifTime,
-    VisitID,
-    IO_ID
-  }, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(200).json({ success: true, VerifID: result.insertId });
-  });
+const verifyCount = async (req, res) => {
+  try {
+    const result = await insertVerification(req.body);
+    res.status(201).json({ message: 'Verification saved', insertId: result.insertId });
+  } catch (err) {
+    console.error('Error in verifyCount:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 };
+
+const fetchVerifications = async (req, res) => {
+  try {
+    const data = await getAllVerifications();
+    res.json(data);
+  } catch (err) {
+    console.error('Error in fetchVerifications:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+module.exports = { verifyCount, fetchVerifications };

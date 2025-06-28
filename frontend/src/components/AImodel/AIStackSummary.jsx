@@ -1,19 +1,26 @@
-import { useState } from 'react';
-import axios from 'axios';
-import data from './summaryData.json';
-import { FaEdit, FaCheck } from 'react-icons/fa';
+// src/components/AImodel/SummaryCard.jsx
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { FaEdit, FaCheck } from "react-icons/fa";
 
 const SummaryCard = () => {
+  // Default values until AI runs or user edits
   const [formData, setFormData] = useState({
-    totalSacks: data.totalSacks,
-    sacksWithoutErrors: data.sacksWithoutErrors,
-    overlappingSackPairs: data.overlappingSackPairs,
-    positionsOfOverlappingSackPairs: data.positionsOfOverlappingSackPairs,
-    aiModelCount: data.aiModelCount,
+    totalSacks: 0,
+    sacksWithoutErrors: 0,
+    overlappingSackPairs: 0,
+    positionsOfOverlappingSackPairs: "",
+    aiModelCount: 0,
   });
 
   const [showModal, setShowModal] = useState(false);
   const [tempData, setTempData] = useState({ ...formData });
+  const [loading, setLoading] = useState(false);
+
+  // Keep tempData in sync when formData updates
+  useEffect(() => {
+    setTempData({ ...formData });
+  }, [formData]);
 
   const openEditModal = () => {
     setTempData({ ...formData });
@@ -32,16 +39,19 @@ const SummaryCard = () => {
 
   const handleVerify = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/aidata/verify-count', {
-        ManualCount: formData.totalSacks,
-        AICount: formData.aiModelCount,
-        SacksNoError: formData.sacksWithoutErrors,
-        OverlapPairs: formData.overlappingSackPairs,
-        OverlapPositions: formData.positionsOfOverlappingSackPairs,
-        VisitID: 123,
-        IO_ID: 456
-      });
-      console.log('Verification Saved:', response.data);
+      const response = await axios.post(
+        "http://localhost:5000/api/aidata/verify-count",
+        {
+          ManualCount: Number(formData.totalSacks),
+          AICount: Number(formData.aiModelCount),
+          SacksNoError: Number(formData.sacksWithoutErrors),
+          OverlapPairs: Number(formData.overlappingSackPairs),
+          OverlapPositions: formData.positionsOfOverlappingSackPairs,
+          VisitID: 123,
+          IO_ID: 456,
+        }
+      );
+      console.log("Verification Saved:", response.data);
       alert("Verification saved successfully.");
     } catch (err) {
       console.error(err);
@@ -49,35 +59,105 @@ const SummaryCard = () => {
     }
   };
 
+  const runAIModel = async () => {
+    try {
+      setLoading(true);
+      const video = document.getElementById("webcam-video");
+      const canvas = document.querySelector("canvas");
+      if (!video || !canvas) {
+        alert("Video or canvas not found.");
+        setLoading(false);
+        return;
+      }
+
+      // Capture image
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = video.videoWidth;
+      tempCanvas.height = video.videoHeight;
+      const ctx = tempCanvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+      const base64Image = tempCanvas
+        .toDataURL("image/jpeg")
+        .replace(/^data:image\/jpeg;base64,/, "");
+
+      // Roboflow API call
+      const response = await axios({
+        method: "POST",
+        url: "https://serverless.roboflow.com/sack-counting-x1wzu-lkzgj/1",
+        params: { api_key: "BnFrWCGuYJw6CLOyIqiM" },
+        data: base64Image,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      });
+
+      const predictions = response.data.predictions || [];
+      const total = predictions.length;
+
+      // Draw bounding boxes
+      const drawCtx = canvas.getContext("2d");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      drawCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+      predictions.forEach((pred) => {
+        const { x, y, width, height, class: label, confidence } = pred;
+        drawCtx.strokeStyle = "#A43424";
+        drawCtx.lineWidth = 2;
+        drawCtx.strokeRect(x - width / 2, y - height / 2, width, height);
+        drawCtx.fillStyle = "#A43424";
+        drawCtx.font = "16px Arial";
+        drawCtx.fillText(
+          `${label} (${(confidence * 100).toFixed(1)}%)`,
+          x - width / 2,
+          y - height / 2 - 5
+        );
+      });
+
+      setFormData({
+        totalSacks: total,
+        sacksWithoutErrors: total,
+        overlappingSackPairs: 0,
+        positionsOfOverlappingSackPairs: "",
+        aiModelCount: total,
+      });
+
+      alert(`AI detected ${total} sacks.`);
+    } catch (err) {
+      console.error("Roboflow error:", err.message);
+      alert("Failed to run AI model.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
-      {/* Summary */}
       <div className="card-summary text-[color:var(--darkest-red)]">
         <ul className="space-y-4">
-          <li className="flex justify-between items-center rounded-lg pr-3 pl-3">
-            <span className="font-medium text-sm md:text-base lg:text-lg">Total Sacks in the Truck</span>
-            <span className="summary-span rounded-lg w-20 h-10 text-sm md:text-base lg:text-lg">{formData.totalSacks}</span>
+          <li className="flex justify-between items-center rounded-lg px-3">
+            <span className="font-medium">Total Sacks in the Truck</span>
+            <span className="summary-span w-20 h-10">{formData.totalSacks}</span>
           </li>
-          <li className="flex justify-between items-center rounded-lg pr-3 pl-3">
-            <span className="font-medium text-sm md:text-base lg:text-lg">Sacks Without Errors</span>
-            <span className="summary-span rounded-lg w-20 h-10 text-sm md:text-base lg:text-lg">{formData.sacksWithoutErrors}</span>
+          <li className="flex justify-between items-center rounded-lg px-3">
+            <span className="font-medium">Sacks Without Errors</span>
+            <span className="summary-span w-20 h-10">{formData.sacksWithoutErrors}</span>
           </li>
-          <li className="flex justify-between items-center rounded-lg pr-3 pl-3">
-            <span className="font-medium text-sm md:text-base lg:text-lg">Overlapping Sack Pairs</span>
-            <span className="summary-span rounded-lg w-20 h-10 text-sm md:text-base lg:text-lg">{formData.overlappingSackPairs}</span>
+          <li className="flex justify-between items-center rounded-lg px-3">
+            <span className="font-medium">Overlapping Sack Pairs</span>
+            <span className="summary-span w-20 h-10">{formData.overlappingSackPairs}</span>
           </li>
-          <li className="flex justify-between items-center rounded-lg pr-3 pl-3">
-            <span className="font-medium text-sm md:text-base lg:text-lg">Positions of Overlapping Sack Pairs</span>
-            <span className="summary-span rounded-lg w-20 h-10 text-sm md:text-base lg:text-lg">{formData.positionsOfOverlappingSackPairs}</span>
+          <li className="flex justify-between items-center rounded-lg px-3">
+            <span className="font-medium">Positions of Overlapping Sack Pairs</span>
+            <span className="summary-span w-20 h-10">
+              {formData.positionsOfOverlappingSackPairs}
+            </span>
           </li>
-          <li className="flex justify-between items-center rounded-lg pr-3 pl-3">
-            <span className="font-medium text-sm md:text-base lg:text-lg">Count got by AI model</span>
-            <span className="summary-span rounded-lg w-20 h-10 text-sm md:text-base lg:text-lg">{formData.aiModelCount}</span>
+          <li className="flex justify-between items-center rounded-lg px-3">
+            <span className="font-medium">Count got by AI model</span>
+            <span className="summary-span w-20 h-10">{formData.aiModelCount}</span>
           </li>
         </ul>
       </div>
 
-      {/* Buttons */}
       <div className="flex justify-end items-center gap-4 mt-4">
         <button
           className="flex items-center gap-2 px-4 py-2 rounded text-white bg-[color:var(--main-red)] hover:bg-[color:var(--darkest-red)] transition"
@@ -91,13 +171,23 @@ const SummaryCard = () => {
         >
           <FaCheck /> Verify Count
         </button>
+        <button
+          disabled={loading}
+          className={`flex items-center gap-2 px-4 py-2 rounded text-white transition ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-[color:var(--main-red)] hover:bg-[color:var(--darkest-red)]"
+          }`}
+          onClick={runAIModel}
+        >
+          {loading ? "Running AI..." : "Run AI Model"}
+        </button>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 backdrop-blur-sm bg-[rgba(0,0,0,0.1)] flex items-center justify-center">
-          <div className="bg-[color:var(--theme-white)] text-black p-6 rounded-lg shadow-lg w-[90%] max-w-md border border-[color:var(--main-red)]">
-            <h2 className="text-lg font-semibold mb-4 text-[color:var(--darkest-red)]">Edit Summary Details</h2>
+          <div className="bg-[color:var(--theme-white)] p-6 rounded-lg shadow-lg w-[90%] max-w-md border border-[color:var(--main-red)]">
+            <h2 className="text-lg font-semibold mb-4 text-[color:var(--darkest-red)]">
+              Edit Summary Details
+            </h2>
             <div className="space-y-4">
               {[
                 { label: "Total Sacks in the Truck", name: "totalSacks" },

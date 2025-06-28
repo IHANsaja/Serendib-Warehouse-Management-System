@@ -1,34 +1,62 @@
-const AITable = () => (
-  <table className="w-full mt-4 text-center table-auto rounded-2xl AIdata-table">
-    <thead className="table-header">
-      <tr>
-        <th className="text-sm md:text-base lg:text-lg p-2">Truck ID</th>
-        <th className="text-sm md:text-base lg:text-lg p-2">Truck Weight</th>
-        <th className="text-sm md:text-base lg:text-lg p-2">No. of Sacks</th>
-        <th className="text-sm md:text-base lg:text-lg p-2">Overlapping Sack Pairs</th>
-        <th className="text-sm md:text-base lg:text-lg p-2">Order Date</th>
-        <th className="text-sm md:text-base lg:text-lg p-2">Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr className="bg-[var(--table-row-one)]">
-        <td className="text-sm md:text-base lg:text-lg p-2">TL-2009</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">500KG</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">500</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">1</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">2025/02/09</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">2 stacks overlapped</td>
-      </tr>
-      <tr className="bg-[var(--table-row-two)]">
-        <td className="text-sm md:text-base lg:text-lg p-2">LP-2022</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">1T</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">1000</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">4</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">2025/02/09</td>
-        <td className="text-sm md:text-base lg:text-lg p-2">8 stacks overlapped</td>
-      </tr>
-    </tbody>
-  </table>
-);
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const AITable = () => {
+  const [records, setRecords] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:5000/api/aidata/records');
+        setRecords(data);
+      } catch (err) {
+        console.error('Failed to load AI records', err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <table className="w-full mt-4 text-center table-auto rounded-2xl AIdata-table">
+      <thead className="table-header">
+        <tr>
+          {[
+            'Verification ID',
+            'Manual Count',
+            'AI Count',
+            'Sacks No Error',
+            'Overlap Pairs',
+            'Overlap Positions',
+            'Verification Date',
+            'Visit ID',
+            'IO ID',
+          ].map((header) => (
+            <th key={header} className="text-sm md:text-base lg:text-lg p-2">
+              {header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {records.map((rec, idx) => (
+          <tr
+            key={rec.VerifID}
+            className={idx % 2 === 0 ? 'bg-[var(--table-row-one)]' : 'bg-[var(--table-row-two)]'}
+          >
+            <td className="p-2">{rec.VerifID}</td>
+            <td className="p-2">{rec.ManualCount}</td>
+            <td className="p-2">{rec.AICount}</td>
+            <td className="p-2">{rec.SacksNoError}</td>
+            <td className="p-2">{rec.OverlapPairs}</td>
+            <td className="p-2">{rec.OverlapPositions}</td>
+            <td className="p-2">{rec.VerifDate}</td>
+            <td className="p-2">{rec.VisitID}</td>
+            <td className="p-2">{rec.IO_ID}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 export default AITable;
