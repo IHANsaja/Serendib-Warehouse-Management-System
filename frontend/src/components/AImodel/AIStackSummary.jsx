@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaEdit, FaCheck } from "react-icons/fa";
+import { useAIStatus } from "../../context/AIStatusContext"; 
+import { toast } from "sonner";
 
 const SummaryCard = () => {
   // Default values until AI runs or user edits
@@ -16,6 +18,8 @@ const SummaryCard = () => {
   const [showModal, setShowModal] = useState(false);
   const [tempData, setTempData] = useState({ ...formData });
   const [loading, setLoading] = useState(false);
+  const { updateStatus } = useAIStatus(); // <-- Use context
+
 
   // Keep tempData in sync when formData updates
   useEffect(() => {
@@ -35,6 +39,7 @@ const SummaryCard = () => {
   const handleSaveChanges = () => {
     setFormData({ ...tempData });
     setShowModal(false);
+    toast.success("Details updated successfully.");
   };
 
   const handleVerify = async () => {
@@ -52,35 +57,37 @@ const SummaryCard = () => {
         }
       );
       console.log("Verification Saved:", response.data);
-      alert("Verification saved successfully.");
+      toast.success("Verification saved successfully.");
     } catch (err) {
       console.error(err);
-      alert("Error saving verification.");
+      toast.error("Error saving verification.");
     }
   };
 
   const runAIModel = async () => {
     try {
       setLoading(true);
+      updateStatus("Accessing video and canvas...", 10);
+
       const video = document.getElementById("webcam-video");
       const canvas = document.querySelector("canvas");
+
       if (!video || !canvas) {
-        alert("Video or canvas not found.");
+        toast.error("Video or canvas not found.");
+        updateStatus("Video or canvas not found.", 100);
         setLoading(false);
         return;
       }
 
-      // Capture image
+      updateStatus("Capturing frame...", 20);
       const tempCanvas = document.createElement("canvas");
       tempCanvas.width = video.videoWidth;
       tempCanvas.height = video.videoHeight;
       const ctx = tempCanvas.getContext("2d");
       ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-      const base64Image = tempCanvas
-        .toDataURL("image/jpeg")
-        .replace(/^data:image\/jpeg;base64,/, "");
+      const base64Image = tempCanvas.toDataURL("image/jpeg").replace(/^data:image\/jpeg;base64,/, "");
 
-      // Roboflow API call
+      updateStatus("Sending image to Roboflow...", 40);
       const response = await axios({
         method: "POST",
         url: "https://serverless.roboflow.com/sack-counting-x1wzu-lkzgj/1",
@@ -89,10 +96,11 @@ const SummaryCard = () => {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
 
+      updateStatus("Processing predictions...", 60);
       const predictions = response.data.predictions || [];
       const total = predictions.length;
 
-      // Draw bounding boxes
+      updateStatus("Drawing bounding boxes...", 80);
       const drawCtx = canvas.getContext("2d");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -110,6 +118,8 @@ const SummaryCard = () => {
         );
       });
 
+      updateStatus(`Detection complete. ${total} sacks found.`, 100);
+
       setFormData({
         totalSacks: total,
         sacksWithoutErrors: total,
@@ -118,14 +128,16 @@ const SummaryCard = () => {
         aiModelCount: total,
       });
 
-      alert(`AI detected ${total} sacks.`);
+      toast.success(`AI detected ${total} sacks.`);
     } catch (err) {
       console.error("Roboflow error:", err.message);
-      alert("Failed to run AI model.");
+      updateStatus("Error during AI processing.", 100);
+      toast.error("Failed to run AI model.");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <>

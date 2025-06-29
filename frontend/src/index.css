@@ -191,9 +191,19 @@ footer {
     @apply bg-[var(--main-red)] rounded-lg;
   }
   .card-count {
-    @apply bg-[var(--theme-white)] rounded-lg shadow-lg p-4;
+    @apply bg-[var(--theme-white)] shadow-lg p-4;
   }
   .card-summary {
     @apply bg-[var(--table-row-one)] rounded-lg p-4;
   }
+}
+
+.card-count {
+  background: linear-gradient(to right, #1c1c1c, #2a2a2a);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+  border: 1px solid #A43424;
+  box-shadow: 0 0 15px rgba(164, 52, 36, 0.3);
 }

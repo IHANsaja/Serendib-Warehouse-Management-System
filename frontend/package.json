@@ -23,6 +23,7 @@
     "react-pdf": "^9.2.1",
     "react-router-dom": "^7.6.2",
     "recharts": "^2.15.1",
+    "sonner": "^2.0.5",
     "tailwindcss": "^4.0.8"
   },
   "devDependencies": {
