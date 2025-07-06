@@ -4,6 +4,21 @@ const DataManageTable = ({role}) => {
   const [activeTab, setActiveTab] = useState("loading");
   const [data, setData] = useState([]);
   const [timestamps, setTimestamps] = useState({});
+  const [user, setUser] = useState(null);
+
+
+  // Fetch session data
+  useEffect(() => {
+  fetch("http://localhost:5000/api/auth/session", {
+    credentials: 'include',
+  })
+    .then(res => res.json())
+    .then(data => {
+      setUser(data.user);
+      console.log("Session user:", data.user);
+    })
+    .catch(err => console.error("Session fetch failed:", err));
+}, []);
 
   // Fetch orders based on tab (loading/unloading)
   useEffect(() => {
@@ -25,13 +40,45 @@ const DataManageTable = ({role}) => {
   const isExecutive = role === "Executive Officer";
 
   const setTime = (id, field) => {
-    const currentTime = new Date().toLocaleTimeString();
+    const currentTime = new Date().toISOString().slice(0, 19).replace("T", " ");
+    const item = data.find((d) => d.ItemCode === id);
+    const vehicleNumber = item?.VehicleNo;
+    const companyId = item?.CustomerID;
+    const truckType = activeTab === "loading" ? "Loading" : "Unloading";
 
+    // For security officer — update TRUCKVISIT table
+    if (isSecurity) {
+      if (field === "arrival" || field === "exit") {
+        const route =
+          field === "arrival"
+            ? "truckvisit/arrival"
+            : "truckvisit/exit";
+
+        const payload = {
+          vehicleNumber,
+          truckType,
+          companyId,
+          seId: user?.id,
+          [field === "arrival" ? "arrivalTime" : "leaveTime"]: currentTime,
+        };
+
+        fetch(`http://localhost:5000/api/order/${route}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(`Truck visit ${field} updated:`, data.message))
+          .catch((err) => console.error(`Failed to update ${field} time:`, err));
+      }
+    }
+
+    // Update local UI state
     setTimestamps((prev) => {
       const updated = { ...prev[id] };
 
       if (field === "arrival") {
-        // Reset exit when arrival is checked
         return {
           ...prev,
           [id]: {
@@ -42,7 +89,6 @@ const DataManageTable = ({role}) => {
       }
 
       if (field === "bayIn") {
-        // Reset bayOut when bayIn is checked
         return {
           ...prev,
           [id]: {
@@ -52,7 +98,6 @@ const DataManageTable = ({role}) => {
         };
       }
 
-      // Default behavior for exit or bayOut
       return {
         ...prev,
         [id]: {
@@ -62,6 +107,7 @@ const DataManageTable = ({role}) => {
       };
     });
   };
+
 
 
   // const data = [
