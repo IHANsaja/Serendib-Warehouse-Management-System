@@ -7,8 +7,7 @@ const LoginPG = ({ setRole }) => {
 
   const handleLogin = (user) => {
     console.log("User logged in:", user);
-    setRole(role);
-    
+    setRole(user.role); // 🟢 Use role from DB
   };
 
   return (
@@ -17,7 +16,7 @@ const LoginPG = ({ setRole }) => {
         <h2 className="heading font-black text-3xl">SERENDIB WMS LOGIN</h2>
         <RoleSelector role={role} setRole={setLocalRole} />
         <div className="input-container">
-          <LoginForm role={role} setRole={setLocalRole} onLogin={handleLogin} />
+          <LoginForm role={role} onLogin={handleLogin} />
         </div>
       </div>
     </div>

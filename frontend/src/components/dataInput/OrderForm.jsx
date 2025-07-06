@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DataTable from "../dataInput/dataTable.jsx";
-import axios from 'axios';
+import axios from "axios";
 
 const OrderForm = () => {
   const [formData, setFormData] = useState({
@@ -24,7 +24,7 @@ const OrderForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/order', {
+      const response = await axios.post("http://localhost:5000/api/order", {
         OrderID: formData.OrderNo,
         ProductName: formData.Item,
         QtyOrdered: formData.Quantity,
@@ -37,7 +37,6 @@ const OrderForm = () => {
 
       alert(response.data.message);
 
-      // Reset form fields after successful submission
       setFormData({
         CustomerName: "",
         OrderNo: "",
@@ -46,161 +45,127 @@ const OrderForm = () => {
         Item: "",
         VehicleNo: "",
         Date: "",
-        Type: "loading", // default back to "loading"
-    });
+        Type: "loading",
+      });
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.error || 'Something went wrong');
+      alert(error.response?.data?.error || "Something went wrong");
     }
   };
 
-  const handleStatusChange = (id) => {
-    const updatedOrders = orders.map((order) =>
-      order.id === id
-        ? {
-            ...order,
-            status:
-              order.status === "pending"
-                ? "ok"
-                : order.status === "ok"
-                ? "not ok"
-                : "ok",
-          }
-        : order
-    );
-    setOrders(updatedOrders);
-  };
-
   return (
-    <div>
+    <div className="px-4 py-6" style={{ backgroundColor: "var(--theme-white)" }}>
       <form
         onSubmit={handleSubmit}
-        className="bg-secondary p-6 rounded-lg shadow-md grid grid-cols-1 md:grid-cols-3 gap-6"
+        className="p-6 md:p-8 rounded-xl shadow-xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+        style={{ backgroundColor: "var(--theme-white)" }}
       >
-        {/* First Column (Left) */}
-        <div className="mb-4">
-          <label className="block text-main mb-2">Customer Name</label>
-          <input
-            type="text"
-            name="CustomerName"
-            value={formData.CustomerName}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-main focus:border-accent outline-none"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-main mb-2">Order No</label>
-          <input
-            type="text"
-            name="OrderNo"
-            value={formData.OrderNo}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-main focus:border-accent outline-none"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-main mb-2">Item Code</label>
-          <input
-            type="text"
-            name="ItemCode"
-            value={formData.ItemCode}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-main focus:border-accent outline-none"
-            required
-          />
-        </div>
+        <h2
+          className="col-span-full text-xl font-semibold border-b pb-2"
+          style={{ color: "var(--main-red)", borderColor: "var(--main-red)" }}
+        >
+          Order Entry Form
+        </h2>
 
-        {/* Second Column (Center) */}
-        <div className="mb-4">
-          <label className="block text-main mb-2">Quantity</label>
-          <input
-            type="number"
-            name="Quantity"
-            value={formData.Quantity}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-main focus:border-accent outline-none"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-main mb-2">Item</label>
-          <input
-            type="text"
-            name="Item"
-            value={formData.Item}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-main focus:border-accent outline-none"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-main mb-2">Vehicle No</label>
-          <input
-            type="text"
-            name="VehicleNo"
-            value={formData.VehicleNo}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-main focus:border-accent outline-none"
-            required
-          />
-        </div>
+        {/* Input Fields */}
+        {[
+          { label: "Customer Name", name: "CustomerName", type: "text" },
+          { label: "Order No", name: "OrderNo", type: "text" },
+          { label: "Item Code", name: "ItemCode", type: "text" },
+          { label: "Quantity", name: "Quantity", type: "number" },
+          { label: "Item", name: "Item", type: "text" },
+          { label: "Vehicle No", name: "VehicleNo", type: "text" },
+          { label: "Date", name: "Date", type: "date" },
+        ].map(({ label, name, type }) => (
+          <div key={name}>
+            <label
+              className="block mb-2 text-sm font-medium"
+              style={{ color: "var(--main-red)" }}
+            >
+              {label}
+            </label>
+            <input
+              type={type}
+              name={name}
+              value={formData[name]}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border focus:outline-none"
+              style={{
+                borderColor: "var(--main-red)",
+                backgroundColor: "var(--theme-white)",
+                color: "var(--darkest-red)",
+              }}
+              onFocus={(e) =>
+                (e.target.style.borderColor = "var(--theme-yellow)")
+              }
+              onBlur={(e) =>
+                (e.target.style.borderColor = "var(--main-red)")
+              }
+            />
+          </div>
+        ))}
 
-        {/* Third Column (Right) */}
-        <div className="mb-4">
-          <label className="block text-main mb-2">Date</label>
-          <input
-            type="date"
-            name="Date"
-            value={formData.Date}
-            onChange={handleChange}
-            className="w-full p-3 rounded-lg border border-main focus:border-accent outline-none"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-main mb-2">Type</label>
+        {/* Type Radio Buttons */}
+        <div className="col-span-full">
+          <label
+            className="block mb-2 text-sm font-medium"
+            style={{ color: "var(--main-red)" }}
+          >
+            Type
+          </label>
           <div className="flex space-x-4">
-            <label className="flex items-center text-main">
-              <input
-                type="radio"
-                name="Type"
-                value="loading"
-                checked={formData.Type === "loading"}
-                onChange={handleChange}
-                className="mr-2"
-              />
-              Loading
-            </label>
-            <label className="flex items-center text-main">
-              <input
-                type="radio"
-                name="Type"
-                value="unloading"
-                checked={formData.Type === "unloading"}
-                onChange={handleChange}
-                className="mr-2"
-              />
-              Unloading
-            </label>
+            {["loading", "unloading"].map((typeOption) => (
+              <button
+                key={typeOption}
+                type="button"
+                onClick={() => setFormData({ ...formData, Type: typeOption })}
+                className="px-6 py-2 rounded-full border text-sm font-medium transition-all duration-200"
+                style={{
+                  borderColor: "var(--main-red)",
+                  backgroundColor:
+                    formData.Type === typeOption
+                      ? "var(--theme-yellow)"
+                      : "var(--theme-white)",
+                  color:
+                    formData.Type === typeOption
+                      ? "var(--darkest-red)"
+                      : "var(--main-red)",
+                }}
+              >
+                {typeOption.charAt(0).toUpperCase() + typeOption.slice(1)}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Submit Button */}
-        <div className="col-span-3 flex justify-end mt-4">
+        <div className="col-span-full flex justify-end mt-4">
           <button
             type="submit"
-            className="w-40 py-3 btn-primary cursor-pointer"
+            className="px-6 py-3 rounded-lg font-semibold cursor-pointer"
+            style={{
+              backgroundColor: "var(--main-red)",
+              color: "var(--theme-white)",
+              transition: "background-color 0.3s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--darkest-red)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "var(--main-red)")
+            }
           >
-            Submit
+            Submit Order
           </button>
         </div>
       </form>
 
-      {/* Table to display submitted orders */}
+      {/* Orders Table */}
       {orders.length > 0 && (
-        <DataTable orders={orders} handleStatusChange={handleStatusChange} />
+        <div className="mt-8">
+          <DataTable orders={orders} handleStatusChange={() => {}} />
+        </div>
       )}
     </div>
   );
