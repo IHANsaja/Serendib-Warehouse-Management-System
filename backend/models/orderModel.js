@@ -1,19 +1,12 @@
 // backend/models/orderModel.js
 const db = require('../config/db');
 
-const getCompanyIdByName = (companyName, callback) => {
-  db.query(
-    'SELECT CompanyID FROM COMPANY WHERE Name = ?',
-    [companyName],
-    (err, results) => {
-      if (err) return callback(err);
-      if (results.length === 0) return callback(null, null);
-      callback(null, results[0].CompanyID);
-    }
-  );
+const getCompanyIdByName = async (companyName) => {
+  const [rows] = await db.query('SELECT CompanyID FROM COMPANY WHERE Name = ?', [companyName]);
+  return rows.length > 0 ? rows[0].CompanyID : null;
 };
 
-const insertOrder = (orderData, callback) => {
+const insertOrder = async (orderData) => {
   const {
     OrderID,
     ProductName,
@@ -26,7 +19,7 @@ const insertOrder = (orderData, callback) => {
     Type,
   } = orderData;
 
-  db.query(
+  await db.query(
     `INSERT INTO \`ORDER\` 
      (OrderID, ProductName, QtyOrdered, CompanyID, CustomerName, ItemCode, VehicleNo, Date, Type)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -40,8 +33,7 @@ const insertOrder = (orderData, callback) => {
       VehicleNo,
       Date,
       Type,
-    ],
-    callback
+    ]
   );
 };
 

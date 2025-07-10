@@ -37,17 +37,19 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Test DB connection
-db.query('SELECT 1', (err, results) => {
-  if (err) {
+(async () => {
+  try {
+    const [rows] = await db.query('SELECT 1');
+    console.log('✅ Database connection verified');
+  } catch (err) {
     console.error('Database connection failed:', err);
     process.exit(1);
   }
-  console.log('✅ Database connection verified');
-});
+})();
 
 // ✅ Apply session middleware
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'yourSecretKey',
+  secret: process.env.SESSION_SECRET || 'SerendibWMSSecret1@2',
   store: sessionStore,
   resave: false,
   saveUninitialized: false,

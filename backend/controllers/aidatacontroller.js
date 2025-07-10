@@ -1,4 +1,4 @@
-// File: src/controllers/aidatacontroller.js
+// backend/controllers/aidatacontroller.js
 const { insertVerification, getAllVerifications } = require('../models/aidatamodel');
 
 const verifyCount = async (req, res) => {

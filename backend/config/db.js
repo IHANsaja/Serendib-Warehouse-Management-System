@@ -44,7 +44,8 @@
 // module.exports = createDbConnection();
 
 
-const mysql = require('mysql2');
+// backend/config/db.js
+const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 const pool = mysql.createPool({
@@ -57,5 +58,5 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-console.log('MySQL pool created');
+console.log('✅ MySQL pool (with promise) created');
 module.exports = pool;
