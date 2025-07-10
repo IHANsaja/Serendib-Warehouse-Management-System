@@ -29,7 +29,7 @@ const Sidebar = ({ selected, onSelect }) => {
 
   return (
     <div
-      className={`h-screen ${
+      className={`calc(h-screen-72px) ${
         isMobile ? "w-16 min-w-16" : "w-60 min-w-60"
       } bg-[#6C1509] text-white p-2 md:p-4 flex flex-col items-center pt-4 space-y-4 z-50`}
     >

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+// src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 import DataInputForm from "./pages/DataInputPG";
 import LoginPG from "./pages/LoginPG";
 import AIresponsePG from "./pages/AIresponsePG";
@@ -9,16 +10,21 @@ import DataManageForm from "./components/datamanage/DataManageTable";
 import { Toaster } from "sonner";
 
 function App() {
-  const [role, setRole] = useState(null);
+  const { user } = useAuth();
+
+  if (user === null) {
+    return <LoginPG />;
+  }
+
+  const role = user?.role;
 
   return (
     <>
       <Routes>
         {!role ? (
-          <Route path="*" element={<LoginPG setRole={setRole} />} />
+          <Route path="*" element={<LoginPG />} />
         ) : (
           <>
-            {/* Redirect “/” → role home */}
             <Route
               path="/"
               element={
@@ -44,7 +50,7 @@ function App() {
               <Route path="/executive" element={<DataInputForm />} />
             )}
 
-            {/* Security Officer (no Sidebar) */}
+            {/* Security Officer */}
             {role === "Security Officer" && (
               <Route
                 path="/security"
@@ -61,12 +67,11 @@ function App() {
               <Route path="/inventory" element={<AIresponsePG />} />
             )}
 
-            {/* Catch‑all */}
+            {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" />} />
           </>
         )}
       </Routes>
-      
       <Toaster richColors position="top-right" expand={true} />
     </>
   );

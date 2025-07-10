@@ -20,7 +20,6 @@ INSERT INTO EMPLOYEE VALUES (1002, 'Jane Doe', 'Executive', 'jane.doe@example.co
 INSERT INTO EMPLOYEE VALUES (1003, 'John Smith', 'Security Officer', '0719876543', 'senpassword');
 INSERT INTO EMPLOYEE VALUES (1004, 'Alice Brown', 'Inventory Officer', 'alice.b@example.com', 'invenpassword');
 
-
 -- ORDER
 CREATE TABLE `ORDER` (
     OrderID INT PRIMARY KEY,
@@ -94,3 +93,11 @@ CREATE TABLE COUNTERVERIFICATION (
     VisitID INT,
     IO_ID INT
 );
+
+-- SESSIONS TABLE for express-mysql-session
+CREATE TABLE `sessions` (
+    `session_id` VARCHAR(128) NOT NULL,
+    `expires` BIGINT UNSIGNED NOT NULL,
+    `data` TEXT,
+    PRIMARY KEY (`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { FaUserCircle, FaMoon, FaSun, FaSignOutAlt } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 const Settings = () => {
+    const { user, logout } = useAuth();
     const [profile, setProfile] = useState({
         name: '',
         email: '',
@@ -83,7 +85,7 @@ const Settings = () => {
 
             <div className="mt-8 text-center">
                 <button
-                    onClick={handleLogout}
+                    onClick={logout}
                     className="flex items-center justify-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-500 transition"
                 >
                     <FaSignOutAlt /> Logout

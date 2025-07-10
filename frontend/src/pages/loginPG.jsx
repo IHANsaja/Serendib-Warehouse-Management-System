@@ -1,13 +1,16 @@
+// src/pages/LoginPG.jsx
 import React, { useState } from "react";
-import LoginForm from "../components/login/loginForm.jsx";
+import LoginForm from "../components/login/LoginForm.jsx";
 import RoleSelector from "../components/login/RoleSelector.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
-const LoginPG = ({ setRole }) => {
+const LoginPG = () => {
   const [role, setLocalRole] = useState("Administrator");
+  const { setUser } = useAuth();
 
   const handleLogin = (user) => {
     console.log("User logged in:", user);
-    setRole(user.role); // 🟢 Use role from DB
+    setUser(user); // ✅ sets the global user context
   };
 
   return (
