@@ -6,20 +6,29 @@ const loginUser = async (req, res) => {
     console.log("🔐 [LOGIN] API hit");
 
     const { name, password, role } = req.body;
-    console.log("📥 Input:", name, password, role);
+    console.log("📥 Input:", { name, password, role });
+
+    // Log the exact query parameters being sent to the database
+    console.log("🔍 Querying database with:", { name, role });
 
     const results = await authModel.findUserByNameAndRole(name, role);
-    console.log("📦 Query Executed");
+    console.log("📦 Query Executed, Results:", results);
 
     if (results.length === 0) {
-      console.log("🔍 User not found");
+      console.log("🔍 User not found for:", { name, role });
       return res.status(401).json({ error: 'User not found for the given role' });
     }
 
     const user = results[0];
+    console.log("👤 User found:", { 
+      EmployeeID: user.EmployeeID, 
+      Name: user.Name, 
+      Role: user.Role,
+      PasswordMatch: user.Password === password ? 'YES' : 'NO'
+    });
 
     if (user.Password !== password) {
-      console.log("🔐 Incorrect password");
+      console.log("🔐 Incorrect password for user:", name);
       return res.status(401).json({ error: 'Incorrect password' });
     }
 

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Import axios
 import { FaSearch, FaUserTie } from 'react-icons/fa';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -6,17 +7,26 @@ import { motion } from 'framer-motion';
 
 const Employees = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [employees, setEmployees] = useState([]); // State to hold data from API
 
-    const employeeData = [
-        { id: 'E101', name: 'John Doe', role: 'Operator', loadings: 120, unloadings: 100, period: 'Jan 2025', efficiency: '92%' },
-        { id: 'E102', name: 'Jane Smith', role: 'Supervisor', loadings: 140, unloadings: 130, period: 'Jan 2025', efficiency: '96%' },
-        { id: 'E103', name: 'Emily Johnson', role: 'Operator', loadings: 160, unloadings: 110, period: 'Jan 2025', efficiency: '88%' },
-        { id: 'E104', name: 'Michael Brown', role: 'Loader', loadings: 90, unloadings: 85, period: 'Jan 2025', efficiency: '80%' },
-    ];
+    // Fetch data from the backend when the component mounts
+    useEffect(() => {
+        const fetchEmployeeData = async () => {
+            try {
+                // Adjust the URL to your backend server's address
+                const response = await axios.get('http://localhost:5000/api/employees/performance');
+                setEmployees(response.data);
+            } catch (error) {
+                console.error("Error fetching employee data:", error);
+            }
+        };
 
-    const filteredEmployees = employeeData.filter((employee) =>
+        fetchEmployeeData();
+    }, []); // Empty dependency array ensures this runs only once
+
+    const filteredEmployees = employees.filter((employee) =>
         employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        employee.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
         employee.role.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -34,15 +44,15 @@ const Employees = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full ml-5 pl-10 pr-4 py-3 border border-[var(--main-red)] rounded-2xl text-base 
-                            bg-[var(--table-row-one)] text-[var(--main-red)] placeholder:text-[var(--main-red)] placeholder:pl-8 placeholder:opacity-50
-                            focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow"
+                               bg-[var(--table-row-one)] text-[var(--main-red)] placeholder:text-[var(--main-red)] placeholder:pl-8 placeholder:opacity-50
+                               focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow"
                 />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredEmployees.map((employee) => {
-                    const totalTasks = employee.loadings + employee.unloadings;
-                    const performance = ((totalTasks / 300) * 100).toFixed(2);
+                    // The backend now provides the final efficiency value
+                    const performanceValue = employee.efficiency;
                     return (
                         <motion.div
                             key={employee.id}
@@ -62,8 +72,8 @@ const Employees = () => {
                                     transition={{ duration: 0.5 }}
                                 >
                                     <CircularProgressbar
-                                        value={performance}
-                                        text={`${performance}%`}
+                                        value={performanceValue}
+                                        text={`${Math.round(performanceValue)}%`} // Display rounded value
                                         styles={buildStyles({
                                             textSize: '14px',
                                             pathColor: 'var(--main-red)',
@@ -75,7 +85,7 @@ const Employees = () => {
                                 <div className="text-sm space-y-1">
                                     <p>Loadings: <span className="font-medium">{employee.loadings}</span></p>
                                     <p>Unloadings: <span className="font-medium">{employee.unloadings}</span></p>
-                                    <p>Efficiency: <span className="font-semibold text-[var(--main-red)]">{employee.efficiency}</span></p>
+                                    <p>Efficiency: <span className="font-semibold text-[var(--main-red)]">{performanceValue}%</span></p>
                                     <p className="text-xs text-gray-500">Period: {employee.period}</p>
                                 </div>
                             </div>

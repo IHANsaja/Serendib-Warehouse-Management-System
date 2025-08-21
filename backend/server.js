@@ -65,11 +65,23 @@ app.use(session({
 const authRoutes = require('./routes/authRoutes');
 const aiDataRoutes = require('./routes/aiRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const truckRoutes = require('./routes/truckRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
+const reportRoutes = require('./routes/reportRoutes');
+const visitBayRoutes = require("./routes/visitBayRoutes");
+const bayRoutes = require('./routes/bayRoutes');
+const currentProcessRoutes = require('./routes/currentProcessRoutes');
 
 // ✅ Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/aidata', aiDataRoutes);
 app.use('/api/order', orderRoutes);
+app.use('/api/trucks', truckRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/visits-bays', visitBayRoutes);
+app.use('/api/bay', bayRoutes);
+app.use('/api/current-process', currentProcessRoutes);
 
 // ✅ Start server
 app.listen(5000, () => {

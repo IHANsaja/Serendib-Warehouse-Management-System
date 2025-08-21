@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const LoginForm = ({ role, onLogin }) => {
   const [username, setUserName] = useState("");
@@ -24,7 +25,7 @@ const LoginForm = ({ role, onLogin }) => {
         console.log("Login successful:", data);
         onLogin(data.user);
       } else {
-        alert(data.error);
+        toast.error(data.error);
       }
     } catch (err) {
       console.error("Login error:", err);

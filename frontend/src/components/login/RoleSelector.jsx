@@ -2,7 +2,7 @@ import React from "react";
 
 const roles = [
   "Administrator",
-  "Executive",
+  "Executive Officer",
   "Security Officer",
   "Inventory Officer",
 ];

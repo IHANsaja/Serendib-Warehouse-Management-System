@@ -8,33 +8,39 @@ const getCompanyIdByName = async (companyName) => {
 
 const insertOrder = async (orderData) => {
   const {
-    OrderID,
-    ProductName,
-    QtyOrdered,
     CompanyID,
-    CustomerName,
+    DriverName,
+    VehicleNumber,
     ItemCode,
-    VehicleNo,
-    Date,
+    Item,
     Type,
+    Quantity,
+    OrderDate,
+    EstimatedBayInTime,
+    EstimatedBayOutTime,
+    EO_ID,
   } = orderData;
 
-  await db.query(
+  const [result] = await db.query(
     `INSERT INTO \`ORDER\` 
-     (OrderID, ProductName, QtyOrdered, CompanyID, CustomerName, ItemCode, VehicleNo, Date, Type)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     (CompanyID, DriverName, VehicleNumber, ItemCode, Item, Type, Quantity, OrderDate, EstimatedBayInTime, EstimatedBayOutTime, EO_ID)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
-      OrderID,
-      ProductName,
-      QtyOrdered,
       CompanyID,
-      CustomerName,
+      DriverName,
+      VehicleNumber,
       ItemCode,
-      VehicleNo,
-      Date,
+      Item,
       Type,
+      Quantity,
+      OrderDate,
+      EstimatedBayInTime,
+      EstimatedBayOutTime,
+      EO_ID,
     ]
   );
+  
+  return result.insertId; // Return the auto-generated OrderID
 };
 
 module.exports = { getCompanyIdByName, insertOrder };
