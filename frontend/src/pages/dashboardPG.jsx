@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import CurrentProcess from '../components/dashboard/CurrentProcess';
@@ -9,13 +9,20 @@ import Unloadings from '../components/dashboard/Unloadings';
 import Reports from '../components/dashboard/Reports';
 import Settings from '../components/dashboard/Settings';
 import Employees from '../components/dashboard/Employees';
+import { useLanguage } from '../context/LanguageContext';
 
 const DashboardPage = () => {
-    const [activeTab, setActiveTab] = useState('Dashboard');
+    const { t } = useLanguage();
+    const [activeTab, setActiveTab] = useState(t('dashboard.overview'));
+
+    // Update activeTab when language changes
+    useEffect(() => {
+        setActiveTab(t('dashboard.overview'));
+    }, [t]);
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'Dashboard':
+            case t('dashboard.overview'):
                 return (
                     <>
                         <section className="my-4">
@@ -27,15 +34,15 @@ const DashboardPage = () => {
                         </section>
                     </>
                 );
-            case 'Loadings':
+            case t('truck.loading'):
                 return <Loadings />;
-            case 'Unloadings':
+            case t('truck.unloading'):
                 return <Unloadings />;
-            case 'Employees':
+            case t('employee.title'):
                 return <Employees />;
-            case 'Reports':
+            case t('dashboard.reports'):
                 return <Reports />;
-            case 'Settings':
+            case t('dashboard.settings'):
                 return <Settings />;
             default:
                 return <p>Content not found</p>;

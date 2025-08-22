@@ -1,19 +1,23 @@
 import { FaTachometerAlt, FaTruckLoading, FaTruck, FaFileAlt, FaCog, FaUserTie } from 'react-icons/fa';
+import { useLanguage } from '../../context/LanguageContext';
+import LanguageToggle from '../common/LanguageToggle';
 
 const DashboardSidebar = ({ activeTab, setActiveTab }) => {
+    const { t } = useLanguage();
     const menuItems = [
-        { name: "Dashboard", icon: <FaTachometerAlt /> },
-        { name: "Loadings", icon: <FaTruckLoading /> },
-        { name: "Unloadings", icon: <FaTruck /> },
-        { name: "Employees", icon: <FaUserTie />},
-        { name: "Reports", icon: <FaFileAlt /> },
-        { name: "Settings", icon: <FaCog /> },
+        { name: t('dashboard.overview'), icon: <FaTachometerAlt /> },
+        { name: t('truck.loading'), icon: <FaTruckLoading /> },
+        { name: t('truck.unloading'), icon: <FaTruck /> },
+        { name: t('employee.title'), icon: <FaUserTie />},
+        { name: t('dashboard.reports'), icon: <FaFileAlt /> },
+        { name: t('dashboard.settings'), icon: <FaCog /> },
     ];
 
     return (
-        <aside className="bg-[var(--main-red)] min-h-full text-white pt-6 w-full relative overflow-visible">
-            <div className='w-full flex items-center justify-center mb-6'>
+        <aside className="bg-[var(--main-red)] min-h-full text-white pt-6 pb-24 w-full relative overflow-visible">
+            <div className='w-full flex flex-col gap-5 items-center justify-center mb-15'>
                 <h2 className="relative text-xl font-semibold header-head w-[80%] text-center">SERENDIB WMS</h2>
+                <LanguageToggle size="sm" showText={false} />
             </div>
             <ul className="space-y-4">
                 {menuItems.map((item, index) => (
@@ -33,6 +37,6 @@ const DashboardSidebar = ({ activeTab, setActiveTab }) => {
             </ul>
         </aside>
     );
-};
+}; 
 
 export default DashboardSidebar;

@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTruck, FaUser, FaClock, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
+import LanguageToggle from '../common/LanguageToggle';
 
 const TruckManagementTracker = () => {
+    const { t } = useLanguage();
     const [truckRecords, setTruckRecords] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [truckVisits, setTruckVisits] = useState([]);
@@ -139,7 +142,7 @@ const TruckManagementTracker = () => {
             <div className="bg-[var(--theme-white)] p-6 rounded-2xl shadow-lg flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--main-red)] mx-auto mb-4"></div>
-                    <p className="text-[var(--main-red)]">Loading truck management data...</p>
+                    <p className="text-[var(--main-red)]">{t('common.loading')}</p>
                 </div>
             </div>
         );
@@ -149,14 +152,18 @@ const TruckManagementTracker = () => {
         <div className="bg-[var(--theme-white)] p-6 rounded-2xl shadow-lg space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold text-[var(--main-red)] flex items-center gap-2">
-                    <FaTruck className="text-[var(--main-red)]" /> Truck Management Tracker
+                    <FaTruck className="text-[var(--main-red)]" /> {t('truck.title')}
                 </h1>
-                <button
-                    onClick={() => setShowAddForm(true)}
-                    className="px-4 py-2 bg-[var(--main-red)] text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
-                >
-                    <FaPlus /> Add Record
-                </button>
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => setShowAddForm(true)}
+                        className="px-4 py-2 bg-[var(--main-red)] text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                    >
+                        <FaPlus /> {t('truck.addRecord')}
+                    </button>
+                    
+                    <LanguageToggle size="sm" />
+                </div>
             </div>
 
             {showAddForm && (
@@ -166,12 +173,12 @@ const TruckManagementTracker = () => {
                     className="bg-gray-50 p-6 rounded-lg border border-gray-200"
                 >
                     <h3 className="text-lg font-semibold mb-4 text-[var(--main-red)]">
-                        {editingRecord ? 'Edit Truck Management Record' : 'Add New Truck Management Record'}
+                        {editingRecord ? t('truck.editRecord') : t('truck.addNewRecord')}
                     </h3>
                     
                     <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Employee</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('truck.employee')}</label>
                             <select
                                 name="EmployeeID"
                                 value={formData.EmployeeID}
@@ -179,7 +186,7 @@ const TruckManagementTracker = () => {
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--main-red)] focus:border-transparent"
                                 required
                             >
-                                <option value="">Select Employee</option>
+                                <option value="">{t('truck.selectEmployee')}</option>
                                 {employees.map(emp => (
                                     <option key={emp.id} value={emp.id}>
                                         {emp.name} - {emp.role}
@@ -189,7 +196,7 @@ const TruckManagementTracker = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Truck Visit</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('truck.truckVisit')}</label>
                             <select
                                 name="VisitID"
                                 value={formData.VisitID}
@@ -206,7 +213,7 @@ const TruckManagementTracker = () => {
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--main-red)] focus:border-transparent"
                                 required
                             >
-                                <option value="">Select Truck Visit</option>
+                                <option value="">{t('truck.selectTruckVisit')}</option>
                                 {truckVisits.map(visit => (
                                     <option key={visit.VisitID} value={visit.VisitID}>
                                         {visit.VehicleNumber} - {visit.DriverName} ({visit.Type})
@@ -216,7 +223,7 @@ const TruckManagementTracker = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Truck Number</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('truck.truckNumber')}</label>
                             <input
                                 type="text"
                                 name="TruckNumber"
@@ -228,7 +235,7 @@ const TruckManagementTracker = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Driver Name</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('truck.driverName')}</label>
                             <input
                                 type="text"
                                 name="DriverName"
@@ -240,7 +247,7 @@ const TruckManagementTracker = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Operation Type</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('truck.operationType')}</label>
                             <select
                                 name="OperationType"
                                 value={formData.OperationType}
@@ -248,13 +255,13 @@ const TruckManagementTracker = () => {
                                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--main-red)] focus:border-transparent"
                                 required
                             >
-                                <option value="Loading">Loading</option>
-                                <option value="Unloading">Unloading</option>
+                                <option value="Loading">{t('truck.loading')}</option>
+                                <option value="Unloading">{t('truck.unloading')}</option>
                             </select>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Session Start Time</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('truck.sessionStartTime')}</label>
                             <input
                                 type="datetime-local"
                                 name="SessionStartTime"
@@ -266,7 +273,7 @@ const TruckManagementTracker = () => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Session End Time</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">{t('truck.sessionEndTime')}</label>
                             <input
                                 type="datetime-local"
                                 name="SessionEndTime"
@@ -282,13 +289,13 @@ const TruckManagementTracker = () => {
                                 onClick={resetForm}
                                 className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
                             >
-                                Cancel
+                                {t('common.cancel')}
                             </button>
                             <button
                                 type="submit"
                                 className="px-4 py-2 bg-[var(--main-red)] text-white rounded-lg hover:bg-red-700 transition-colors"
                             >
-                                {editingRecord ? 'Update' : 'Save'}
+                                {editingRecord ? t('common.update') : t('common.save')}
                             </button>
                         </div>
                     </form>
@@ -297,26 +304,26 @@ const TruckManagementTracker = () => {
 
             <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Truck Management Records</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{t('truck.truckManagementRecords')}</h3>
                 </div>
                 
                 {truckRecords.length === 0 ? (
                     <div className="p-6 text-center text-gray-500">
                         <FaTruck className="mx-auto text-4xl text-gray-300 mb-2" />
-                        <p>No truck management records found.</p>
-                        <p className="text-sm">Click "Add Record" to start tracking truck management.</p>
+                        <p>{t('truck.noRecordsFound')}</p>
+                        <p className="text-sm">{t('truck.clickAddRecord')}</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Truck</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operation</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Session Time</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('truck.employee')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('truck.truckNumber')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('truck.driverName')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('truck.operationType')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.time')}</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.actions')}</th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
@@ -354,9 +361,9 @@ const TruckManagementTracker = () => {
                                             <div className="flex items-center">
                                                 <FaClock className="text-gray-400 mr-1" />
                                                 <div>
-                                                    <div>Start: {new Date(record.SessionStartTime).toLocaleString()}</div>
+                                                    <div>{t('truck.start')}: {new Date(record.SessionStartTime).toLocaleString()}</div>
                                                     {record.SessionEndTime && (
-                                                        <div>End: {new Date(record.SessionEndTime).toLocaleString()}</div>
+                                                        <div>{t('truck.end')}: {new Date(record.SessionEndTime).toLocaleString()}</div>
                                                     )}
                                                 </div>
                                             </div>

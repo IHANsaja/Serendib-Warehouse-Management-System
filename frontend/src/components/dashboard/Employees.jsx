@@ -4,8 +4,11 @@ import { FaSearch, FaUserTie, FaClock, FaTruck, FaChartLine } from 'react-icons/
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
+import LanguageToggle from '../common/LanguageToggle';
 
 const Employees = () => {
+    const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -75,7 +78,7 @@ const Employees = () => {
             <div className="bg-[var(--theme-white)] p-6 rounded-2xl shadow-lg flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--main-red)] mx-auto mb-4"></div>
-                    <p className="text-[var(--main-red)]">Loading employee data...</p>
+                    <p className="text-[var(--main-red)]">{t('common.loading')}</p>
                 </div>
             </div>
         );
@@ -85,13 +88,13 @@ const Employees = () => {
         return (
             <div className="bg-[var(--theme-white)] p-6 rounded-2xl shadow-lg">
                 <div className="text-center text-[var(--main-red)]">
-                    <p className="text-lg font-semibold mb-2">Error</p>
+                    <p className="text-lg font-semibold mb-2">{t('common.error')}</p>
                     <p>{error}</p>
                     <button 
                         onClick={fetchEmployeeData}
                         className="mt-4 px-4 py-2 bg-[var(--main-red)] text-white rounded-lg hover:bg-red-700 transition-colors"
                     >
-                        Retry
+                        {t('common.retry')}
                     </button>
                 </div>
             </div>
@@ -102,30 +105,32 @@ const Employees = () => {
         <div className="bg-[var(--theme-white)] p-6 rounded-2xl shadow-lg space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-[var(--main-red)] mb-4 md:mb-0 text-center md:text-left flex items-center gap-2">
-                    <FaUserTie className="text-[var(--main-red)]" /> Employee Efficiency Overview
+                    <FaUserTie className="text-[var(--main-red)]" /> {t('employee.title')}
                 </h1>
                 
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => setViewMode('all')}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                            viewMode === 'all' 
-                                ? 'bg-[var(--main-red)] text-white' 
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                    >
-                        All Time
-                    </button>
-                    <button
-                        onClick={() => setViewMode('monthly')}
-                        className={`px-4 py-2 rounded-lg transition-colors ${
-                            viewMode === 'monthly' 
-                                ? 'bg-[var(--main-red)] text-white' 
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                    >
-                        This Month
-                    </button>
+                <div className="flex items-center gap-4">
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setViewMode('all')}
+                            className={`px-4 py-2 rounded-lg transition-colors ${
+                                viewMode === 'all' 
+                                    ? 'bg-[var(--main-red)] text-white' 
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            {t('employee.allTime')}
+                        </button>
+                        <button
+                            onClick={() => setViewMode('monthly')}
+                            className={`px-4 py-2 rounded-lg transition-colors ${
+                                viewMode === 'monthly' 
+                                    ? 'bg-[var(--main-red)] text-white' 
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                        >
+                            {t('employee.thisMonth')}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -133,7 +138,7 @@ const Employees = () => {
                 <FaSearch className="absolute left-3 top-5 text-[var(--main-red)] opacity-50" />
                 <input
                     type="text"
-                    placeholder="Search by name, ID, or role"
+                    placeholder={t('employee.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full ml-5 pl-10 pr-4 py-3 border border-[var(--main-red)] rounded-2xl text-base 
@@ -207,7 +212,7 @@ const Employees = () => {
                                 <div className="text-center p-2 bg-blue-50 rounded-lg">
                                     <FaTruck className="mx-auto text-blue-600 mb-1" />
                                     <p className="font-semibold text-blue-600">{employee.totalTrucksManaged || 0}</p>
-                                    <p className="text-xs text-gray-600">Total Trucks</p>
+                                    <p className="text-xs text-gray-600">{t('employee.totalTrucks')}</p>
                                 </div>
                                 
                                 <div className="text-center p-2 bg-green-50 rounded-lg">
@@ -218,70 +223,70 @@ const Employees = () => {
                                             : (parseFloat(employee.totalWorkHours) || 0).toFixed(1)
                                         }
                                     </p>
-                                    <p className="text-xs text-gray-600">Work Hours</p>
+                                    <p className="text-xs text-gray-600">{t('employee.workHours')}</p>
                                 </div>
                             </div>
 
                             <div className="mt-3 pt-3 border-t border-gray-200">
                                 <div className="flex justify-between text-xs text-gray-600">
-                                    <span>Loadings: <span className="font-medium">{employee.loadings || 0}</span></span>
-                                    <span>Unloadings: <span className="font-medium">{employee.unloadings || 0}</span></span>
+                                    <span>{t('employee.loadings')}: <span className="font-medium">{employee.loadings || 0}</span></span>
+                                    <span>{t('employee.unloadings')}: <span className="font-medium">{employee.unloadings || 0}</span></span>
                                 </div>
                                 {viewMode === 'all' && (
                                     <div className="text-xs text-gray-500 mt-1">
-                                        Sessions: {employee.totalSessions || 0}
+                                        {t('employee.sessions')}: {employee.totalSessions || 0}
                                     </div>
                                 )}
                                 {viewMode === 'monthly' && (
                                     <div className="text-xs text-gray-500 mt-1">
-                                        Sessions: {employee.monthlySessions || 0}
+                                        {t('employee.sessions')}: {employee.monthlySessions || 0}
                                     </div>
                                 )}
                             </div>
 
                             <div className="text-xs text-gray-400 text-center mt-3">
-                                Period: {employee.period}
+                                {t('employee.period')}: {employee.period}
                             </div>
                         </motion.div>
                     );
                 })
                 .filter(Boolean)}
                 
-                            {filteredEmployees.length === 0 && (
-                <div className="col-span-full text-center text-[var(--main-red)] font-semibold py-8">
-                    {searchTerm ? 'No employees found matching your search.' : 'No employees found. Please check if the database has employee data.'}
-                </div>
-            )}
+                                            {filteredEmployees.length === 0 && (
+                    <div className="col-span-full text-center text-[var(--main-red)] font-semibold py-8">
+                        {searchTerm ? t('employee.noEmployeesMatching') : t('employee.noEmployeesFound') + ' ' + t('employee.checkDatabase')}
+                    </div>
+                )}
             </div>
 
             {filteredEmployees.length > 0 && (
                 <div className="mt-8 p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-3">
                         <FaChartLine className="text-[var(--main-red)]" />
-                        <h3 className="text-lg font-semibold text-[var(--main-red)]">Summary</h3>
+                        <h3 className="text-lg font-semibold text-[var(--main-red)]">{t('common.summary')}</h3>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div className="text-center">
                             <p className="font-semibold text-gray-700">{filteredEmployees.length}</p>
-                            <p className="text-gray-500">Total Employees</p>
+                            <p className="text-gray-500">{t('employee.totalEmployees')}</p>
                         </div>
                         <div className="text-center">
                             <p className="font-semibold text-gray-700">
                                 {filteredEmployees.reduce((sum, emp) => sum + (emp.totalTrucksManaged || 0), 0)}
                             </p>
-                            <p className="text-gray-500">Total Trucks</p>
+                            <p className="text-gray-500">{t('employee.totalTrucks')}</p>
                         </div>
                         <div className="text-center">
                             <p className="font-semibold text-gray-700">
                                 {filteredEmployees.reduce((sum, emp) => sum + (parseFloat(emp.totalWorkHours) || 0), 0).toFixed(1)}
                             </p>
-                            <p className="text-gray-500">Total Hours</p>
+                            <p className="text-gray-500">{t('employee.totalHours')}</p>
                         </div>
                         <div className="text-center">
                             <p className="font-semibold text-gray-700">
                                 {Math.round(filteredEmployees.reduce((sum, emp) => sum + emp.efficiency, 0) / filteredEmployees.length)}
                             </p>
-                            <p className="text-gray-500">Avg Efficiency</p>
+                            <p className="text-gray-500">{t('employee.avgEfficiency')}</p>
                         </div>
                     </div>
                 </div>
