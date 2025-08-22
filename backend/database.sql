@@ -18,7 +18,7 @@ CREATE TABLE EMPLOYEE (
     Email VARCHAR(255)
 );
 
--- Insert sample employees
+-- Insert sample employees with updated roles
 INSERT INTO EMPLOYEE VALUES (1001, 'TestUser', 'Administrator', '0771234567', '123456', 'admin@serendib.com');
 INSERT INTO EMPLOYEE VALUES (1002, 'Jane Doe', 'Executive Officer', 'jane.doe@example.com', 'execpassword', 'jane@serendib.com');
 INSERT INTO EMPLOYEE VALUES (1003, 'John Smith', 'Security Officer', '0719876543', 'senpassword', 'john@serendib.com');
@@ -125,6 +125,76 @@ INSERT INTO BAYOPERATION VALUES (2, 2, 2, '2024-01-16 09:15:00', '2024-01-16 12:
 INSERT INTO BAYOPERATION VALUES (3, 3, 1, '2024-01-17 07:45:00', '2024-01-17 11:15:00', NULL, NULL, 'Scheduled', 1002);
 INSERT INTO BAYOPERATION VALUES (4, 4, 4, '2024-01-18 10:15:00', '2024-01-18 13:45:00', NULL, NULL, 'Scheduled', 1002);
 INSERT INTO BAYOPERATION VALUES (5, 5, 2, '2024-01-19 08:45:00', '2024-01-19 12:15:00', NULL, NULL, 'Scheduled', 1002);
+
+-- Now create the employee efficiency tables after all referenced tables exist
+-- EMPLOYEE_LOGIN_SESSION - Track individual login sessions
+CREATE TABLE EMPLOYEE_LOGIN_SESSION (
+    SessionID INT PRIMARY KEY AUTO_INCREMENT,
+    EmployeeID INT NOT NULL,
+    LoginTime DATETIME NOT NULL,
+    LogoutTime DATETIME NULL,
+    DurationSeconds INT NULL,
+    FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID)
+);
+
+-- EMPLOYEE_WORK_HOURS - Track total work hours per employee
+CREATE TABLE EMPLOYEE_WORK_HOURS (
+    RecordID INT PRIMARY KEY AUTO_INCREMENT,
+    EmployeeID INT NOT NULL,
+    Date DATE NOT NULL,
+    TotalWorkHours DECIMAL(10,2) DEFAULT 0.00,
+    TotalSessions INT DEFAULT 0,
+    LastUpdated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID),
+    UNIQUE KEY unique_employee_date (EmployeeID, Date)
+);
+
+-- EMPLOYEE_TRUCK_MANAGEMENT - Track trucks managed by each employee during their sessions
+CREATE TABLE EMPLOYEE_TRUCK_MANAGEMENT (
+    RecordID INT PRIMARY KEY AUTO_INCREMENT,
+    SessionID INT NOT NULL,
+    EmployeeID INT NOT NULL,
+    VisitID INT NOT NULL,
+    TruckNumber VARCHAR(50) NOT NULL,
+    DriverName VARCHAR(255) NOT NULL,
+    OperationType ENUM('Loading', 'Unloading') NOT NULL,
+    SessionStartTime DATETIME NOT NULL,
+    SessionEndTime DATETIME NULL,
+    FOREIGN KEY (SessionID) REFERENCES EMPLOYEE_LOGIN_SESSION(SessionID),
+    FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID),
+    FOREIGN KEY (VisitID) REFERENCES TRUCKVISIT(VisitID)
+);
+
+-- Insert sample data for employee efficiency tracking
+-- Sample login sessions
+INSERT INTO EMPLOYEE_LOGIN_SESSION (EmployeeID, LoginTime, LogoutTime, DurationSeconds) VALUES
+(1002, '2024-01-15 08:00:00', '2024-01-15 17:00:00', 32400), -- 9 hours
+(1002, '2024-01-16 08:00:00', '2024-01-16 17:00:00', 32400), -- 9 hours
+(1002, '2024-01-17 08:00:00', '2024-01-17 17:00:00', 32400), -- 9 hours
+(1003, '2024-01-15 07:00:00', '2024-01-15 19:00:00', 43200), -- 12 hours
+(1003, '2024-01-16 07:00:00', '2024-01-16 19:00:00', 43200), -- 12 hours
+(1004, '2024-01-15 09:00:00', '2024-01-15 18:00:00', 32400), -- 9 hours
+(1004, '2024-01-16 09:00:00', '2024-01-16 18:00:00', 32400); -- 9 hours
+
+-- Sample work hours records
+INSERT INTO EMPLOYEE_WORK_HOURS (EmployeeID, Date, TotalWorkHours, TotalSessions) VALUES
+(1002, '2024-01-15', 9.00, 1),
+(1002, '2024-01-16', 9.00, 1),
+(1002, '2024-01-17', 9.00, 1),
+(1003, '2024-01-15', 12.00, 1),
+(1003, '2024-01-16', 12.00, 1),
+(1004, '2024-01-15', 9.00, 1),
+(1004, '2024-01-16', 9.00, 1);
+
+-- Sample truck management records
+INSERT INTO EMPLOYEE_TRUCK_MANAGEMENT (SessionID, EmployeeID, VisitID, TruckNumber, DriverName, OperationType, SessionStartTime, SessionEndTime) VALUES
+(1, 1002, 1, 'WP-KA-1234', 'Ravi Perera', 'Loading', '2024-01-15 08:00:00', '2024-01-15 17:00:00'),
+(2, 1002, 2, 'WP-CB-5678', 'Saman Silva', 'Loading', '2024-01-16 08:00:00', '2024-01-16 17:00:00'),
+(3, 1002, 3, 'WP-NE-9012', 'Kumar Fernando', 'Loading', '2024-01-17 08:00:00', '2024-01-17 17:00:00'),
+(4, 1003, 4, 'WP-GA-3456', 'Priya Wijesinghe', 'Unloading', '2024-01-15 07:00:00', '2024-01-15 19:00:00'),
+(5, 1003, 5, 'WP-MT-7890', 'Ajith Bandara', 'Loading', '2024-01-16 07:00:00', '2024-01-16 19:00:00'),
+(6, 1004, 1, 'WP-KA-1234', 'Ravi Perera', 'Loading', '2024-01-15 09:00:00', '2024-01-15 18:00:00'),
+(7, 1004, 2, 'WP-CB-5678', 'Saman Silva', 'Loading', '2024-01-16 09:00:00', '2024-01-16 18:00:00');
 
 -- SESSIONS TABLE for express-mysql-session
 CREATE TABLE `sessions` (
