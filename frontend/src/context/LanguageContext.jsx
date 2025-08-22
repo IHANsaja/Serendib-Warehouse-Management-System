@@ -90,7 +90,8 @@ const languages = {
             nextWeek: 'ඊළඟ සතිය',
             nextMonth: 'ඊළඟ මාසය',
             nextYear: 'ඊළඟ වර්ෂය',
-            switchTo: 'වෙනස් කරන්න'
+            switchTo: 'වෙනස් කරන්න',
+            welcome: 'සාදරයෙන් පිළිගනිමු'
         },
         
         // Employee efficiency system
@@ -274,7 +275,8 @@ const languages = {
             nextWeek: 'Next Week',
             nextMonth: 'Next Month',
             nextYear: 'Next Year',
-            switchTo: 'Switch to'
+            switchTo: 'Switch to',
+            welcome: 'Welcome'
         },
         
         // Employee efficiency system

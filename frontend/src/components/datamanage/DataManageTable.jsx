@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { getSriLankaTime } from "../../utils/timeUtils";
 import { toast } from "react-toastify";
+import { useLanguage } from "../../context/LanguageContext";
 
 const DataManageTable = ({ role }) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("loading");
   const [data, setData] = useState([]);
   const [timestamps, setTimestamps] = useState({});
@@ -309,7 +311,7 @@ const DataManageTable = ({ role }) => {
           }`}
           onClick={() => setActiveTab("loading")}
         >
-          Loading
+          {t('truck.loading')}
         </button>
         <button
           className={`w-1/2 py-3 text-lg font-semibold text-center cursor-pointer ${
@@ -319,7 +321,7 @@ const DataManageTable = ({ role }) => {
           }`}
           onClick={() => setActiveTab("unloading")}
         >
-          Unloading
+          {t('truck.unloading')}
         </button>
       </div>
 
@@ -332,34 +334,34 @@ const DataManageTable = ({ role }) => {
       {/* Bay availability warning */}
       {activeTab === "loading" && bayAvailability.loading.allOccupied && (
         <div className="mx-5 mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded">
-          ⚠️ <strong>Warning:</strong> All loading bays are currently occupied. No new loading operations can be added until a bay becomes available.
+          ⚠️ <strong>{t('common.warning')}:</strong> All loading bays are currently occupied. No new loading operations can be added until a bay becomes available.
         </div>
       )}
       
       {activeTab === "unloading" && bayAvailability.unloading.allOccupied && (
         <div className="mx-5 mb-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded">
-          ⚠️ <strong>Warning:</strong> All unloading bays are currently occupied. No new unloading operations can be added until a bay becomes available.
+          ⚠️ <strong>{t('common.warning')}:</strong> All unloading bays are currently occupied. No new unloading operations can be added until a bay becomes available.
         </div>
       )}
 
       <table className="w-full mt-6 text-center">
         <thead>
           <tr className="table-header bg-[var(--main-red)] text-[var(--theme-white)]">
-            <th className="p-3">Item Code</th>
-            <th className="p-3">Item</th>
-            <th className="p-3">Quantity</th>
-            <th className="p-3">Vehicle Number</th>
-            <th className="p-3">Driver</th>
+            <th className="p-3">{t('common.id')}</th>
+            <th className="p-3">{t('common.description')}</th>
+            <th className="p-3">{t('common.quantity')}</th>
+            <th className="p-3">{t('truck.truckNumber')}</th>
+            <th className="p-3">{t('truck.driverName')}</th>
             <th className="p-3">Company</th>
-            <th className="p-3">Estimated Arrival</th>
-            <th className="p-3">Estimated Leave</th>
+            <th className="p-3">{t('common.start')}</th>
+            <th className="p-3">{t('common.end')}</th>
 
             {isSecurity && (
               <>
-                <th className="p-3">✔ Arrival</th>
-                <th className="p-3">Actual Arrival</th>
-                <th className="p-3">✔ Leave</th>
-                <th className="p-3">Actual Leave</th>
+                <th className="p-3">✔ {t('common.start')}</th>
+                <th className="p-3">{t('common.start')}</th>
+                <th className="p-3">✔ {t('common.end')}</th>
+                <th className="p-3">{t('common.end')}</th>
               </>
             )}
             
@@ -474,7 +476,7 @@ const DataManageTable = ({ role }) => {
                         value={selectedBays[visit.VisitID] || ""}
                         disabled={!!visit.ActualBayInTime} // Only disable if bay-in has already been recorded
                       >
-                        <option value="">Select Bay</option>
+                        <option value="">{t('common.select')} Bay</option>
                         {availableBays.map(bay => (
                           <option key={bay.BayID} value={bay.BayID}>
                             {bay.BayNumber} - {bay.LocationDescription}
