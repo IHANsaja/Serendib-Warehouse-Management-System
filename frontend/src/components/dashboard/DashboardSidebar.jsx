@@ -1,4 +1,4 @@
-import { FaTachometerAlt, FaTruckLoading, FaTruck, FaFileAlt, FaCog, FaUserTie } from 'react-icons/fa';
+import { FaTachometerAlt, FaTruckLoading, FaTruck, FaFileAlt, FaCog, FaUserTie, FaCalculator } from 'react-icons/fa';
 
 const DashboardSidebar = ({ activeTab, setActiveTab }) => {
     const menuItems = [
@@ -6,6 +6,7 @@ const DashboardSidebar = ({ activeTab, setActiveTab }) => {
         { name: "Loadings", icon: <FaTruckLoading /> },
         { name: "Unloadings", icon: <FaTruck /> },
         { name: "Employees", icon: <FaUserTie />},
+        { name: "Income Predictor", icon: <FaCalculator /> },
         { name: "Reports", icon: <FaFileAlt /> },
         { name: "Settings", icon: <FaCog /> },
     ];
