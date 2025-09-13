@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { FaCalendarAlt, FaBars } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaBars } from 'react-icons/fa';
 
-const UnloadingTable = ({ title, data, filterDate, onDateChange }) => (
+// Reusable table component for displaying unloading lists
+const UnloadingTable = ({ title, data, filterDate, onDateChange, searchTerm, onSearchChange }) => (
     <div className="bg-white shadow-md rounded-lg p-4 mb-6">
         <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-3">
@@ -13,10 +14,12 @@ const UnloadingTable = ({ title, data, filterDate, onDateChange }) => (
                     <FaBars className="absolute left-3 top-5 text-[var(--main-red)] opacity-80" />
                     <input
                         type="text"
-                        placeholder="Enter Product ID"
+                        placeholder="Enter Order ID to Search"
+                        value={searchTerm}
+                        onChange={(e) => onSearchChange(e.target.value)}
                         className="pl-10 pr-3 py-2 border border-[var(--main-red)] rounded-lg text-sm w-80 
-                                    bg-[var(--first-row)] text-[var(--main-red)] placeholder-[var(--main-red)] placeholder:opacity-80 placeholder:p-8
-                                    focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow-sm"
+                                   bg-[var(--first-row)] text-[var(--main-red)] placeholder-[var(--main-red)] placeholder:opacity-80 
+                                   focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow-sm"
                     />
                 </div>
                 <input
@@ -24,8 +27,8 @@ const UnloadingTable = ({ title, data, filterDate, onDateChange }) => (
                     value={filterDate}
                     onChange={(e) => onDateChange(e.target.value)}
                     className="p-2 border border-[var(--main-red)] rounded-lg text-sm w-48 
-                            bg-[var(--first-row)] text-[var(--main-red)]
-                            focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow-sm"
+                               bg-[var(--first-row)] text-[var(--main-red)]
+                               focus:outline-none focus:ring-2 focus:ring-[var(--theme-yellow)] focus:border-transparent shadow-sm"
                 />
             </div>
         </div>
@@ -41,58 +44,98 @@ const UnloadingTable = ({ title, data, filterDate, onDateChange }) => (
                 </tr>
             </thead>
             <tbody>
-                {data.map((item, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-[var(--first-row)]' : 'bg-[var(--second-row)]'}>
-                        <td className="p-3">{item.orderId}</td>
-                        <td className="p-3">{item.truckNumber}</td>
-                        <td className="p-3">{item.quantity}</td>
-                        <td className="p-3">{item.organization}</td>
-                        <td className="p-3">{item.itemCode}</td>
-                        <td className="p-3">{item.date}</td>
+                {data.length > 0 ? (
+                    data.map((item, index) => (
+                        <tr key={item.orderId || index} className={index % 2 === 0 ? 'bg-[var(--first-row)]' : 'bg-[var(--second-row)]'}>
+                            <td className="p-3">{item.orderId || "-"}</td>
+                            <td className="p-3">{item.truckNumber || "-"}</td>
+                            <td className="p-3">{item.quantity || "-"}</td>
+                            <td className="p-3">{item.organization || "-"}</td>
+                            <td className="p-3">{item.itemCode || "-"}</td>
+                            <td className="p-3">{item.date ? item.date.split("T")[0] : "-"}</td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="6" className="text-center py-4 text-gray-500">
+                            No data found.
+                        </td>
                     </tr>
-                ))}
+                )}
             </tbody>
         </table>
     </div>
 );
 
+// Main component to manage and display unloading data
 const Unloadings = () => {
+    const [allData, setAllData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [filterDate, setFilterDate] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
 
-    const pendingList = [
-        { orderId: 'P2002', truckNumber: 'LP 2020', quantity: '500 kg', organization: 'Harischandra', itemCode: 'NH031, BF056', date: '2025-02-25' },
-        { orderId: 'P2003', truckNumber: 'LP 2021', quantity: '1000 kg', organization: 'Harischandra', itemCode: 'NH031, BF056', date: '2025-02-26' },
-        { orderId: 'P2004', truckNumber: 'LP 2022', quantity: '500 kg', organization: 'Harischandra', itemCode: 'NH031, BF056', date: '2025-02-26' },
-        { orderId: 'P2005', truckNumber: 'LP 2022', quantity: '500 kg', organization: 'Harischandra', itemCode: 'NH031, BF056', date: '2025-02-27' },
-        { orderId: 'P2006', truckNumber: 'LP 2022', quantity: '500 kg', organization: 'Harischandra', itemCode: 'NH031, BF056', date: '2025-02-28' },
-        { orderId: 'P2007', truckNumber: 'LP 2022', quantity: '500 kg', organization: 'Harischandra', itemCode: 'NH031, BF056', date: '2025-02-28' },
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            // ✅ **FIX: Dynamically build URL with date filter**
+            let url = "http://localhost:5000/api/trucks/unloading";
+            if (filterDate) {
+                url += `?date=${filterDate}`;
+            }
 
-    const completedList = [
-        { orderId: 'P2005', truckNumber: 'LP 2023', quantity: '500 kg', organization: 'Harischandra', itemCode: 'NH031, BF056', date: '2025-02-25' },
-        { orderId: 'P2006', truckNumber: 'LP 2024', quantity: '1000 kg', organization: 'Harischandra', itemCode: 'BF031', date: '2025-02-26' },
-        { orderId: 'P2007', truckNumber: 'LP 2024', quantity: '1000 kg', organization: 'Harischandra', itemCode: 'BF031', date: '2025-02-26' },
-        { orderId: 'P2008', truckNumber: 'LP 2024', quantity: '1000 kg', organization: 'Harischandra', itemCode: 'BF031', date: '2025-02-26' },
-        { orderId: 'P2009', truckNumber: 'LP 2024', quantity: '1000 kg', organization: 'Harischandra', itemCode: 'BF031', date: '2025-02-25' },
-    ];
+            try {
+                const res = await fetch(url, { credentials: "include" });
+                const data = await res.json();
+                setAllData(data);
+            } catch (err) {
+                console.error("Error fetching unloading trucks:", err);
+                setAllData([]);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const filterByDate = (list) =>
-        filterDate ? list.filter((item) => item.date === filterDate) : list;
+        fetchData();
+    }, [filterDate]); // ✅ **FIX: Re-run effect when filterDate changes**
+
+    const pendingList = React.useMemo(() =>
+        allData
+            .filter(item => item.status && item.status.toLowerCase() === 'pending')
+            .filter(item => !searchTerm || (item.orderId != null && String(item.orderId).toLowerCase().includes(searchTerm.toLowerCase()))),
+        [allData, searchTerm]
+    );
+
+    const completedList = React.useMemo(() =>
+        allData
+            .filter(item => item.status && item.status.toLowerCase() === 'completed')
+            .filter(item => !searchTerm || (item.orderId != null && String(item.orderId).toLowerCase().includes(searchTerm.toLowerCase()))),
+        [allData, searchTerm]
+    );
 
     return (
         <div className="p-6 bg-[#FFF]">
-            <UnloadingTable
-                title="PENDING LIST"
-                data={filterByDate(pendingList)}
-                filterDate={filterDate}
-                onDateChange={setFilterDate}
-            />
-            <UnloadingTable
-                title="COMPLETED LIST"
-                data={filterByDate(completedList)}
-                filterDate={filterDate}
-                onDateChange={setFilterDate}
-            />
+             {isLoading ? (
+                <div className="p-6 text-center font-semibold text-lg">Loading Truck Data...</div>
+             ) : (
+                <>
+                    <UnloadingTable
+                        title="PENDING LIST"
+                        data={pendingList}
+                        filterDate={filterDate}
+                        onDateChange={setFilterDate}
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                    />
+                    <UnloadingTable
+                        title="COMPLETED LIST"
+                        data={completedList}
+                        filterDate={filterDate}
+                        onDateChange={setFilterDate}
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                    />
+                </>
+             )}
         </div>
     );
 };

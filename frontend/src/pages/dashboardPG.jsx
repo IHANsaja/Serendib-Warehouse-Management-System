@@ -9,6 +9,7 @@ import Unloadings from '../components/dashboard/Unloadings';
 import Reports from '../components/dashboard/Reports';
 import Settings from '../components/dashboard/Settings';
 import Employees from '../components/dashboard/Employees';
+import IncomePredictor from '../components/dashboard/IncomePredict';
 
 const DashboardPage = () => {
     const [activeTab, setActiveTab] = useState('Dashboard');
@@ -37,6 +38,8 @@ const DashboardPage = () => {
                 return <Reports />;
             case 'Settings':
                 return <Settings />;
+            case 'Income Predictor':
+                return <IncomePredictor />;
             default:
                 return <p>Content not found</p>;
         }
