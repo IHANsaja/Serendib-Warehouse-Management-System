@@ -108,7 +108,6 @@ const languages = {
             totalHours: 'මුළු පැය',
             avgEfficiency: 'සාමාන්‍ය කාර්යක්ෂමතාව',
             workHours: 'වැඩ පැය',
-            totalTrucks: 'මුළු ට්‍රක් රථ',
             sessions: 'සැසි',
             loadings: 'බඩු ගැනීම්',
             unloadings: 'බඩු බෑම්',
@@ -187,6 +186,42 @@ const languages = {
             loginRequired: 'පිවිසීම අවශ්‍යයි',
             confirmDelete: 'මෙය මකා දැමීමට ඔබට විශ්වාසද?',
             unsavedChanges: 'සුරකින ලද නොවන වෙනස්කම් තිබේ. ඔබට ඉදිරියට යාමට අවශ්‍යද?'
+        },
+        
+        // Login page
+        login: {
+            title: 'සෙරන්ඩිබ් ගබඩා කළමනාකරණ පද්ධතිය',
+            subtitle: 'පිවිසීමට ඔබගේ තොරතුරු ඇතුල් කරන්න',
+            usernamePlaceholder: 'පරිශීලක නාමය',
+            passwordPlaceholder: 'මුරපදය',
+            loginButton: 'පිවිසෙන්න',
+            roleLabel: 'භූමිකාව තෝරන්න',
+            toastEnterUsernamePassword: 'කරුණාකර ඔබගේ පරිශීලක නාමය සහ මුරපදය ඇතුල් කරන්න.',
+            toastEnterUsername: 'කරුණාකර ඔබගේ පරිශීලක නාමය ඇතුල් කරන්න.',
+            toastEnterPassword: 'කරුණාකර ඔබගේ මුරපදය ඇතුල් කරන්න.',
+            toastLoginSuccess: 'පිවිසීම සාර්ථකයි!',
+            toastInvalidCredentials: 'අවලංගු පරිශීලක නාමය, මුරපදය, හෝ භූමිකාව.',
+            toastNoPermission: 'මෙම ගිණුමට ප්‍රවේශ වීමට ඔබට අවසර නොමැත.',
+            toastLoginFailed: 'පිවිසීම අසාර්ථක විය. නැවත උත්සාහ කරන්න.',
+            toastNetworkError: 'ජාල දෝෂයක්. කරුණාකර ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න.'
+        },
+        
+        // Roles display labels
+        roles: {
+            administrator: 'පරිපාලක',
+            executiveOfficer: 'විධායක නිලධාරී',
+            securityOfficer: 'ආරක්ෂක නිලධාරී',
+            inventoryOfficer: 'භාණ්ඩ ගණන් නිලධාරී'
+        },
+        
+        // Headers and common titles
+        headers: {
+            appTitle: 'සෙරන්ඩිබ් WMS',
+            dataManageTitle: 'සෙරන්ඩිබ් WMS දත්ත කළමනාකරණය',
+            securityTitle: 'සෙරන්ඩිබ් WMS - ආරක්ෂක නිලධාරී',
+            aiTitle: 'සෙරන්ඩිබ් AI',
+            realTimeCamera: 'කාලීන කැමරා දසුන',
+            loggedInAs: 'ඇතුල් වී ඇත්තේ'
         }
     },
     
@@ -293,7 +328,6 @@ const languages = {
             totalHours: 'Total Hours',
             avgEfficiency: 'Avg Efficiency',
             workHours: 'Work Hours',
-            totalTrucks: 'Total Trucks',
             sessions: 'Sessions',
             loadings: 'Loadings',
             unloadings: 'Unloadings',
@@ -372,11 +406,48 @@ const languages = {
             loginRequired: 'Login required',
             confirmDelete: 'Are you sure you want to delete this?',
             unsavedChanges: 'You have unsaved changes. Do you want to continue?'
+        },
+        
+        // Login page
+        login: {
+            title: 'Serendib Warehouse Management System',
+            subtitle: 'Enter your credentials to sign in',
+            usernamePlaceholder: 'Username',
+            passwordPlaceholder: 'Password',
+            loginButton: 'Login',
+            roleLabel: 'Select Role',
+            toastEnterUsernamePassword: 'Please enter your username and password.',
+            toastEnterUsername: 'Please enter your username.',
+            toastEnterPassword: 'Please enter your password.',
+            toastLoginSuccess: 'Login successful!',
+            toastInvalidCredentials: 'Invalid username, password, or role.',
+            toastNoPermission: "You don't have permission to access this account.",
+            toastLoginFailed: 'Login failed. Please try again.',
+            toastNetworkError: 'Network error. Please check your connection and try again.'
+        },
+        
+        // Roles display labels
+        roles: {
+            administrator: 'Administrator',
+            executiveOfficer: 'Executive Officer',
+            securityOfficer: 'Security Officer',
+            inventoryOfficer: 'Inventory Officer'
+        },
+        
+        // Headers and common titles
+        headers: {
+            appTitle: 'Serendib WMS',
+            dataManageTitle: 'Serendib WMS DataManage',
+            securityTitle: 'Serendib WMS - Security Officer',
+            aiTitle: 'SERENDIB AI',
+            realTimeCamera: 'Real-Time Camera View',
+            loggedInAs: 'Logged in as'
         }
     }
 };
 
 // Language context provider
+// eslint-disable-next-line react/prop-types
 export const LanguageProvider = ({ children }) => {
     const [currentLanguage, setCurrentLanguage] = useState('sinhala');
     
