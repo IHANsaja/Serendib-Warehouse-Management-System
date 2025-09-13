@@ -1,6 +1,24 @@
 // backend/models/aidatamodel.js
 const db = require('../config/db');
 
+// Ensure table exists (avoids runtime 500s if DB wasn't initialized with SQL script)
+const ensureTable = async () => {
+  const createSql = `
+    CREATE TABLE IF NOT EXISTS COUNTERVERIFICATION (
+      VerifID INT PRIMARY KEY AUTO_INCREMENT,
+      ManualCount INT NOT NULL,
+      AICount INT NOT NULL,
+      SacksNoError INT NOT NULL,
+      OverlapPairs INT NOT NULL,
+      OverlapPositions TEXT,
+      VerifTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+      VisitID INT,
+      IO_ID INT
+    )
+  `;
+  await db.query(createSql);
+};
+
 const insertVerification = async ({
   ManualCount,
   AICount,
@@ -10,6 +28,7 @@ const insertVerification = async ({
   VisitID,
   IO_ID
 }) => {
+  await ensureTable();
   const sql = `
     INSERT INTO COUNTERVERIFICATION
       (ManualCount, AICount, SacksNoError, OverlapPairs, OverlapPositions, VerifTime, VisitID, IO_ID)
@@ -28,6 +47,7 @@ const insertVerification = async ({
 };
 
 const getAllVerifications = async () => {
+  await ensureTable();
   const sql = `
     SELECT VerifID, ManualCount, AICount, SacksNoError, OverlapPairs,
            OverlapPositions, DATE_FORMAT(VerifTime, '%Y/%m/%d') AS VerifDate,
