@@ -16,6 +16,7 @@ const DashboardPage = () => {
     const [activeTab, setActiveTab] = useState('Dashboard');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [incomePredictions, setIncomePredictions] = useState([]);
 
     // Check screen size and update state
     useEffect(() => {
@@ -43,6 +44,11 @@ const DashboardPage = () => {
         }
     };
 
+    // Function to update predictions from IncomePredictor
+    const updateIncomePredictions = (predictions) => {
+        setIncomePredictions(predictions);
+    };
+
     const renderContent = () => {
         switch (activeTab) {
             case 'Dashboard':
@@ -53,7 +59,7 @@ const DashboardPage = () => {
                         </section>
                         <section className="flex flex-col gap-6">
                             <ProcessAccuracy />
-                            <ProcessStatus />
+                            <ProcessStatus predictions={incomePredictions} />
                         </section>
                     </>
                 );
@@ -68,7 +74,7 @@ const DashboardPage = () => {
             case 'Settings':
                 return <Settings />;
             case 'Income Predictor':
-                return <IncomePredictor />;
+                return <IncomePredictor onPredict={updateIncomePredictions} />;
             default:
                 return <p>Content not found</p>;
         }
