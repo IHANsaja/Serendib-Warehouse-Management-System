@@ -12,7 +12,7 @@ const DashboardSidebar = ({ activeTab, setActiveTab }) => {
     ];
 
     return (
-        <aside className="bg-[var(--main-red)] min-h-screen text-white pt-6 w-full relative overflow-visible flex flex-col">
+        <aside className="bg-[var(--main-red)] h-screen fixed text-white pt-6 w-full overflow-visible flex flex-col">
             <div className='w-full flex items-center justify-center mb-6'>
                 <h2 className="relative text-xl font-semibold header-head w-[80%] text-center">SERENDIB WMS</h2>
             </div>
