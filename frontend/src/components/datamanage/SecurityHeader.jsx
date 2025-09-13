@@ -2,12 +2,12 @@ import { useAuth } from "../../context/AuthContext";
 import LanguageToggle from "../common/LanguageToggle";
 import { useLanguage } from "../../context/LanguageContext";
 
-const ManageHeader = () => {
-  const {user, logout} = useAuth();
+const SecurityHeader = () => {
+  const { user, logout } = useAuth();
   const { t } = useLanguage();
   return (
-    <div className="p-4 bg-[var(--main-red)] ml-60 flex items-center justify-between">
-      <h2 className="text-3xl font-bold text-white">Serendib WMS DataManage</h2>
+    <div className="p-4 bg-[var(--main-red)] flex items-center justify-between">
+      <h2 className="text-3xl font-bold text-white">Serendib WMS</h2>
       <div className="flex items-center gap-3">
         <LanguageToggle size="sm" />
         <button
@@ -21,4 +21,6 @@ const ManageHeader = () => {
   );
 };
 
-export default ManageHeader;
+export default SecurityHeader;
+
+
