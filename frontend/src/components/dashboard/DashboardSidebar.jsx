@@ -12,11 +12,11 @@ const DashboardSidebar = ({ activeTab, setActiveTab }) => {
     ];
 
     return (
-        <aside className="bg-[var(--main-red)] min-h-full text-white pt-6 w-full relative overflow-visible">
+        <aside className="bg-[var(--main-red)] min-h-screen text-white pt-6 w-full relative overflow-visible flex flex-col">
             <div className='w-full flex items-center justify-center mb-6'>
                 <h2 className="relative text-xl font-semibold header-head w-[80%] text-center">SERENDIB WMS</h2>
             </div>
-            <ul className="space-y-4">
+            <ul className="space-y-4 flex-1">
                 {menuItems.map((item, index) => (
                     <li
                         key={index}
@@ -32,6 +32,10 @@ const DashboardSidebar = ({ activeTab, setActiveTab }) => {
                     </li>
                 ))}
             </ul>
+            {/* Optional: Add a footer if needed to push content to bottom */}
+            <div className="mt-auto p-4 text-center text-sm opacity-80">
+                © {new Date().getFullYear()} Serendib WMS
+            </div>
         </aside>
     );
 };
