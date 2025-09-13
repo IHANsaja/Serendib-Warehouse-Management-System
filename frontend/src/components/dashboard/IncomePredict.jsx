@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const fmtLKR = (x) =>
@@ -8,12 +8,57 @@ const fmtLKR = (x) =>
   }).format(x);
 
 export default function IncomePredictor() {
-  const [incomes, setIncomes] = useState(
-    "1000000,1050000,1100000,1150000,1200000,1250000"
-  );
+  const [incomes, setIncomes] = useState("");
   const [nSteps, setNSteps] = useState(1);
   const [preds, setPreds] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [formMonth, setFormMonth] = useState("");
+  const [formIncome, setFormIncome] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const fetchIncomes = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:5000/api/incomes");
+      // Expecting array of { IncomeID, Month, Income }
+      const ordered = [...data].sort((a, b) => String(a.Month).localeCompare(String(b.Month)));
+      const values = ordered.map((r) => Number(r.Income)).filter((v) => Number.isFinite(v));
+      setIncomes(values.join(","));
+    } catch (err) {
+      console.error("Failed to load incomes:", err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchIncomes();
+  }, []);
+
+  const addIncome = async (e) => {
+    e.preventDefault();
+    if (!/^\d{4}-\d{2}$/.test(formMonth)) {
+      alert("Month must be in YYYY-MM format");
+      return;
+    }
+    const incomeNum = Number(formIncome);
+    if (!Number.isFinite(incomeNum) || incomeNum <= 0) {
+      alert("Income must be a positive number");
+      return;
+    }
+    try {
+      setSaving(true);
+      await axios.post("http://localhost:5000/api/incomes", {
+        month: formMonth,
+        income: incomeNum,
+      });
+      setFormMonth("");
+      setFormIncome("");
+      await fetchIncomes();
+    } catch (err) {
+      console.error("Failed to add income:", err.message);
+      alert("Failed to add income");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const predict = async () => {
     setLoading(true);
@@ -79,6 +124,41 @@ export default function IncomePredictor() {
         >
           {loading ? "Predicting..." : "Predict"}
         </button>
+
+        {/* Add Income Form */}
+        <div className="border-t border-[var(--main-red)] pt-4">
+          <h2 className="text-xl font-bold mb-3 text-[var(--main-red)]">Add Month Income</h2>
+          <form onSubmit={addIncome} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+            <div>
+              <label className="block text-sm font-semibold mb-1">Month (YYYY-MM)</label>
+              <input
+                type="month"
+                className="w-full rounded-lg border border-[var(--main-red)] bg-[var(--table-row-two)] text-[var(--darkest-red)] p-2"
+                value={formMonth}
+                onChange={(e) => setFormMonth(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1">Income (LKR)</label>
+              <input
+                type="number"
+                className="w-full rounded-lg border border-[var(--main-red)] bg-[var(--table-row-two)] text-[var(--darkest-red)] p-2"
+                value={formIncome}
+                onChange={(e) => setFormIncome(e.target.value)}
+                min={0}
+                step="0.01"
+              />
+            </div>
+            <button
+              type="submit"
+              className="btn-primary py-2 px-4"
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : 'Add Income'}
+            </button>
+          </form>
+          <p className="mt-2 text-xs text-[var(--darkest-red)] opacity-70">After adding, the past incomes above will refresh automatically.</p>
+        </div>
 
         {/* Predictions */}
         {preds.length > 0 && (

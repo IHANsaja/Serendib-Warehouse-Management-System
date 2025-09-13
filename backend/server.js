@@ -72,6 +72,7 @@ const visitBayRoutes = require("./routes/visitBayRoutes");
 const bayRoutes = require('./routes/bayRoutes');
 const currentProcessRoutes = require('./routes/currentProcessRoutes');
 const predictRoutes = require("./routes/predictRoutes");
+const incomeRoutes = require('./routes/incomeRoutes');
 
 // ✅ Use routes
 app.use('/api/auth', authRoutes);
@@ -84,6 +85,7 @@ app.use('/api/visits-bays', visitBayRoutes);
 app.use('/api/bay', bayRoutes);
 app.use('/api/current-process', currentProcessRoutes);
 app.use('/api/predict', predictRoutes);
+app.use('/api/incomes', incomeRoutes);
 
 // ✅ Start server
 app.listen(5000, () => {

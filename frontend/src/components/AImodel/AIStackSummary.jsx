@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { FaEdit, FaCheck } from "react-icons/fa";
-import { useAIStatus } from "../../context/AIStatusContext"; 
 import { toast } from "sonner";
 
 const SummaryCard = () => {
@@ -17,8 +16,6 @@ const SummaryCard = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [tempData, setTempData] = useState({ ...formData });
-  const [loading, setLoading] = useState(false);
-  const { updateStatus } = useAIStatus(); // <-- Use context
 
 
   // Keep tempData in sync when formData updates
@@ -64,62 +61,9 @@ const SummaryCard = () => {
     }
   };
 
-  const runAIModel = async () => {
-    try {
-      setLoading(true);
-      updateStatus("Accessing video and canvas...", 10);
-
-      const video = document.getElementById("webcam-video");
-      const canvas = document.querySelector("canvas");
-
-      if (!video || !canvas) {
-        toast.error("Video or canvas not found.");
-        updateStatus("Video or canvas not found.", 100);
-        setLoading(false);
-        return;
-      }
-
-      updateStatus("Capturing frame...", 20);
-      const tempCanvas = document.createElement("canvas");
-      tempCanvas.width = video.videoWidth;
-      tempCanvas.height = video.videoHeight;
-      const ctx = tempCanvas.getContext("2d");
-      ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-      const base64Image = tempCanvas.toDataURL("image/jpeg").replace(/^data:image\/jpeg;base64,/, "");
-
-      updateStatus("Sending image to Roboflow...", 40);
-      const response = await axios({
-        method: "POST",
-        url: "https://serverless.roboflow.com/sack-counting-x1wzu-lkzgj/1",
-        params: { api_key: "BnFrWCGuYJw6CLOyIqiM" },
-        data: base64Image,
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-
-      updateStatus("Processing predictions...", 60);
-      const predictions = response.data.predictions || [];
-      const total = predictions.length;
-
-      updateStatus("Drawing bounding boxes...", 80);
-      const drawCtx = canvas.getContext("2d");
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      drawCtx.clearRect(0, 0, canvas.width, canvas.height);
-
-      predictions.forEach((pred) => {
-        const { x, y, width, height, class: label, confidence } = pred;
-        drawCtx.strokeStyle = "#A43424";
-        drawCtx.lineWidth = 2;
-        drawCtx.font = "16px Arial";
-        drawCtx.fillText(
-          `${label} (${(confidence * 100).toFixed(1)}%)`,
-          x - width / 2,
-          y - height / 2 - 5
-        );
-      });
-
-      updateStatus(`Detection complete. ${total} sacks found.`, 100);
-
+  useEffect(() => {
+    const handler = (e) => {
+      const total = e.detail?.total ?? 0;
       setFormData({
         totalSacks: total,
         sacksWithoutErrors: total,
@@ -127,16 +71,11 @@ const SummaryCard = () => {
         positionsOfOverlappingSackPairs: "",
         aiModelCount: total,
       });
+    };
+    window.addEventListener("ai:sessionComplete", handler);
+    return () => window.removeEventListener("ai:sessionComplete", handler);
+  }, []);
 
-      toast.success(`AI detected ${total} sacks.`);
-    } catch (err) {
-      console.error("Roboflow error:", err.message);
-      updateStatus("Error during AI processing.", 100);
-      toast.error("Failed to run AI model.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
   return (
@@ -180,15 +119,6 @@ const SummaryCard = () => {
           onClick={handleVerify}
         >
           <FaCheck /> Verify Count
-        </button>
-        <button
-          disabled={loading}
-          className={`flex items-center gap-2 px-4 py-2 rounded text-white transition ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-[color:var(--main-red)] hover:bg-[color:var(--darkest-red)]"
-          }`}
-          onClick={runAIModel}
-        >
-          {loading ? "Running AI..." : "Run AI Model"}
         </button>
       </div>
 

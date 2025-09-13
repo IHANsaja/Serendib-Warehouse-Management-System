@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 const LoginForm = ({ role, onLogin }) => {
@@ -8,6 +8,20 @@ const LoginForm = ({ role, onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Logging in as:", role, username);
+
+    // Basic client-side validation with user-friendly toasts
+    if (!username.trim() && !password.trim()) {
+      toast.warn("Please enter your username and password.");
+      return;
+    }
+    if (!username.trim()) {
+      toast.warn("Please enter your username.");
+      return;
+    }
+    if (!password.trim()) {
+      toast.warn("Please enter your password.");
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -19,16 +33,32 @@ const LoginForm = ({ role, onLogin }) => {
         body: JSON.stringify({ name: username, password, role }),
       });
 
-      const data = await response.json();
+      // Attempt to parse JSON safely
+      let data = {};
+      try {
+        data = await response.json();
+      } catch {
+        // non-JSON response
+      }
 
       if (response.ok) {
         console.log("Login successful:", data);
-        onLogin(data.user);
+        toast.success("Login successful!");
+        onLogin?.(data.user);
       } else {
-        toast.error(data.error);
+        // Map common auth failures to clearer messages
+        const message =
+          data?.error ||
+          (response.status === 400 || response.status === 401
+            ? "Invalid username, password, or role."
+            : response.status === 403
+            ? "You don't have permission to access this account."
+            : "Login failed. Please try again.");
+        toast.error(message);
       }
     } catch (err) {
       console.error("Login error:", err);
+      toast.error("Network error. Please check your connection and try again.");
     }
   };
 

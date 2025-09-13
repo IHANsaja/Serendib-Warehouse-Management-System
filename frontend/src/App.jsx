@@ -12,66 +12,64 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { user } = useAuth();
-
-  if (user === null) {
-    return <LoginPG />;
-  }
-
   const role = user?.role;
 
   return (
     <>
-      <Routes>
-        {!role ? (
-          <Route path="*" element={<LoginPG />} />
-        ) : (
-          <>
-            <Route
-              path="/"
-              element={
-                role === "Administrator" ? (
-                  <Navigate to="/admin" />
-                        ) : role === "Executive Officer" ? (
-          <Navigate to="/executive" />
-                ) : role === "Security Officer" ? (
-                  <Navigate to="/security" />
-                ) : (
-                  <Navigate to="/inventory" />
-                )
-              }
-            />
+      {user === null ? (
+        <LoginPG />
+      ) : (
+        <Routes>
+          {!role ? (
+            <Route path="*" element={<LoginPG />} />
+          ) : (
+            <>
+              <Route
+                path="/"
+                element={
+                  role === "Administrator" ? (
+                    <Navigate to="/admin" />
+                  ) : role === "Executive Officer" ? (
+                    <Navigate to="/executive" />
+                  ) : role === "Security Officer" ? (
+                    <Navigate to="/security" />
+                  ) : (
+                    <Navigate to="/inventory" />
+                  )
+                }
+              />
 
-            {/* Administrator */}
-            {role === "Administrator" && (
-              <Route path="/admin" element={<DashboardPG />} />
-            )}
+              {/* Administrator */}
+              {role === "Administrator" && (
+                <Route path="/admin" element={<DashboardPG />} />
+              )}
 
-                    {/* Executive Officer */}
-        {role === "Executive Officer" && (
-          <Route path="/executive" element={<DataInputForm />} />
-        )}
+              {/* Executive Officer */}
+              {role === "Executive Officer" && (
+                <Route path="/executive" element={<DataInputForm />} />
+              )}
 
-            {/* Security Officer */}
-            <Route
-              path="/security"
-              element={
-                <DataManagePG showSecurityTiming={true}>
-                  <DataManageForm role="Security Officer" type="delivery" />
-                </DataManagePG>
-              }
-            />
+              {/* Security Officer */}
+              <Route
+                path="/security"
+                element={
+                  <DataManagePG showSecurityTiming={true}>
+                    <DataManageForm role="Security Officer" type="delivery" />
+                  </DataManagePG>
+                }
+              />
 
+              {/* Inventory Officer */}
+              {role === "Inventory Officer" && (
+                <Route path="/inventory" element={<AIresponsePG />} />
+              )}
 
-            {/* Inventory Officer */}
-            {role === "Inventory Officer" && (
-              <Route path="/inventory" element={<AIresponsePG />} />
-            )}
-
-            {/* Catch-all */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </>
-        )}
-      </Routes>
+              {/* Catch-all */}
+              <Route path="*" element={<Navigate to="/" />} />
+            </>
+          )}
+        </Routes>
+      )}
       <ToastContainer
         position="top-right"
         autoClose={5000}
