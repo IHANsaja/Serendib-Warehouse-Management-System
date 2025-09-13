@@ -8,7 +8,7 @@ const fmtLKR = (x) =>
     currency: "LKR",
   }).format(x);
 
-export default function IncomePredictor() {
+export default function IncomePredictor({ onPredict }) {
   const [incomes, setIncomes] = useState("");
   const [nSteps, setNSteps] = useState(1);
   const [preds, setPreds] = useState([]);
@@ -75,6 +75,11 @@ export default function IncomePredictor() {
         n_steps: nSteps,
       });
       setPreds(data.predictions || []);
+      
+      // Send predictions to parent component (DashboardPage)
+      if (onPredict) {
+        onPredict(data.predictions || []);
+      }
     } catch (err) {
       console.error("Prediction failed:", err.message);
       toast.error("Prediction failed because of: " + err.message.split(":")[1].trim() + "");
