@@ -1,20 +1,16 @@
 import { useAuth } from "../../context/AuthContext";
-import LanguageToggle from "../common/LanguageToggle";
-import { useLanguage } from "../../context/LanguageContext";
 
 const SecurityHeader = () => {
-  const { user, logout } = useAuth();
-  const { t } = useLanguage();
+  const { logout } = useAuth();
   return (
-    <div className="p-4 bg-[var(--main-red)] flex items-center justify-between">
-      <h2 className="text-3xl font-bold text-white">Serendib WMS</h2>
-      <div className="flex items-center gap-3">
-        <LanguageToggle size="sm" />
+    <div className="w-full p-4 text-center bg-[var(--main-red)]">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <h2 className="text-3xl font-bold text-white">Serendib WMS - Security Officer</h2>
         <button
           className="bg-[var(--darkest-red)] text-[var(--theme-white)] px-4 py-2 rounded-xl hover:bg-red-900"
           onClick={logout}
         >
-          {t('common.logout')}
+          Logout
         </button>
       </div>
     </div>
@@ -22,5 +18,3 @@ const SecurityHeader = () => {
 };
 
 export default SecurityHeader;
-
-

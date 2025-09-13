@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "sonner";
 
 const fmtLKR = (x) =>
   new Intl.NumberFormat("en-LK", {
@@ -25,6 +26,7 @@ export default function IncomePredictor() {
       setIncomes(values.join(","));
     } catch (err) {
       console.error("Failed to load incomes:", err.message);
+      toast.error("Failed to load incomes");
     }
   };
 
@@ -35,12 +37,12 @@ export default function IncomePredictor() {
   const addIncome = async (e) => {
     e.preventDefault();
     if (!/^\d{4}-\d{2}$/.test(formMonth)) {
-      alert("Month must be in YYYY-MM format");
+      toast.error("Month must be in YYYY-MM format");
       return;
     }
     const incomeNum = Number(formIncome);
     if (!Number.isFinite(incomeNum) || incomeNum <= 0) {
-      alert("Income must be a positive number");
+      toast.error("Income must be a positive number");
       return;
     }
     try {
@@ -54,7 +56,7 @@ export default function IncomePredictor() {
       await fetchIncomes();
     } catch (err) {
       console.error("Failed to add income:", err.message);
-      alert("Failed to add income");
+      toast.error("Failed to add income because of: " + err.message.split(":")[1].trim() + "");
     } finally {
       setSaving(false);
     }
@@ -75,6 +77,7 @@ export default function IncomePredictor() {
       setPreds(data.predictions || []);
     } catch (err) {
       console.error("Prediction failed:", err.message);
+      toast.error("Prediction failed because of: " + err.message.split(":")[1].trim() + "");
     } finally {
       setLoading(false);
     }

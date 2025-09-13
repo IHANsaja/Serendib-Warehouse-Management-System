@@ -19,6 +19,21 @@ const ensureTable = async () => {
   await db.query(createSql);
 };
 
+// Return the current VisitID if a truck is at a bay; otherwise null
+const getCurrentVisitId = async () => {
+  const sql = `
+    SELECT bo.VisitID
+    FROM BAYOPERATION bo
+    JOIN TRUCKVISIT tv ON bo.VisitID = tv.VisitID
+    WHERE bo.Status = 'Bay In'
+      AND tv.Status = 'At Bay'
+    ORDER BY COALESCE(bo.ActualBayInTime, bo.EstimatedBayInTime) DESC
+    LIMIT 1
+  `;
+  const [rows] = await db.query(sql);
+  return rows.length ? rows[0].VisitID : null;
+};
+
 const insertVerification = async ({
   ManualCount,
   AICount,
@@ -59,4 +74,4 @@ const getAllVerifications = async () => {
   return rows;
 };
 
-module.exports = { insertVerification, getAllVerifications };
+module.exports = { insertVerification, getAllVerifications, getCurrentVisitId };

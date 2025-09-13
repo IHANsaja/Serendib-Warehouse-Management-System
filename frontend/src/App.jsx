@@ -53,7 +53,7 @@ function App() {
               <Route
                 path="/security"
                 element={
-                  <DataManagePG showSecurityTiming={true}>
+                  <DataManagePG showSecurityTiming={false} useSecurityHeader={true}>
                     <DataManageForm role="Security Officer" type="delivery" />
                   </DataManagePG>
                 }

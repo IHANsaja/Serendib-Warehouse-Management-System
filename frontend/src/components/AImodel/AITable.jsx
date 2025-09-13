@@ -13,7 +13,14 @@ const AITable = () => {
         console.error('Failed to load AI records', err);
       }
     };
+
+    // initial fetch
     fetchData();
+
+    // refetch when a verification is saved
+    const handler = () => fetchData();
+    window.addEventListener('ai:verificationSaved', handler);
+    return () => window.removeEventListener('ai:verificationSaved', handler);
   }, []);
 
   return (
@@ -50,7 +57,7 @@ const AITable = () => {
             <td className="p-2">{rec.OverlapPairs}</td>
             <td className="p-2">{rec.OverlapPositions}</td>
             <td className="p-2">{rec.VerifDate}</td>
-            <td className="p-2">{rec.VisitID}</td>
+            <td className="p-2">{rec.VisitID ?? 'Truck visit ID is not available because no truck is on the bay and this is a test run.'}</td>
             <td className="p-2">{rec.IO_ID}</td>
           </tr>
         ))}

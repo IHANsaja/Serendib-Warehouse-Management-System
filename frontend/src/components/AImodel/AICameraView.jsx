@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import LiveCameraFeed from "./LiveCameraFeed";
-import axios from "axios";
 import { useAIStatus } from "../../context/AIStatusContext";
 
 const AICameraView = () => {
@@ -45,23 +44,8 @@ const AICameraView = () => {
     // Update summary via a custom event so AIStackSummary updates its UI
     window.dispatchEvent(new CustomEvent("ai:sessionComplete", { detail: { total } }));
 
-    // Store to DB, mirroring the Verify Count payload
-    try {
-      updateStatus("Saving verification...", 90);
-      await axios.post("http://localhost:5000/api/aidata/verify-count", {
-        ManualCount: Number(total),
-        AICount: Number(total),
-        SacksNoError: Number(total),
-        OverlapPairs: 0,
-        OverlapPositions: "",
-        VisitID: 123,
-        IO_ID: 456,
-      });
-      updateStatus("Saved.", 100);
-    } catch (e) {
-      console.error(e);
-      updateStatus("Failed to save.", 100);
-    }
+    // Do not save to DB here. Saving should happen only when user clicks "Verify Count".
+    updateStatus("Session stopped. Review/edit the summary, then click Verify Count to save.", 95);
   };
 
   const handleFileChange = (e) => {
@@ -90,7 +74,7 @@ const AICameraView = () => {
           )}
         </div>
           <div className="mt-2 text-sm text-[color:var(--theme-white)] bg-[color:var(--darkest-red)] p-2 rounded-md">
-              Total unique sacks detected this session: <span className="font-semibold">{uniqueTotal}</span>
+              Sacks detected this session: <span className="font-semibold">{uniqueTotal}</span>
           </div>
         <div className="flex items-center">
           <button

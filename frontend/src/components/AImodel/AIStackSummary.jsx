@@ -41,6 +41,15 @@ const SummaryCard = () => {
 
   const handleVerify = async () => {
     try {
+      // fetch current VisitID first
+      let visitId = null;
+      try {
+        const { data } = await axios.get("http://localhost:5000/api/aidata/current-visit");
+        visitId = data?.visitId ?? null;
+      } catch (e) {
+        console.warn("Failed to fetch current visit ID", e);
+      }
+
       const response = await axios.post(
         "http://localhost:5000/api/aidata/verify-count",
         {
@@ -49,11 +58,13 @@ const SummaryCard = () => {
           SacksNoError: Number(formData.sacksWithoutErrors),
           OverlapPairs: Number(formData.overlappingSackPairs),
           OverlapPositions: formData.positionsOfOverlappingSackPairs,
-          VisitID: 123,
+          VisitID: visitId,
           IO_ID: 456,
         }
       );
       console.log("Verification Saved:", response.data);
+      // Notify listeners (e.g., AITable) to refresh
+      window.dispatchEvent(new CustomEvent("ai:verificationSaved", { detail: { insertId: response.data?.insertId } }));
       toast.success("Verification saved successfully.");
     } catch (err) {
       console.error(err);
