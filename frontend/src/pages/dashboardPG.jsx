@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import CurrentProcess from '../components/dashboard/CurrentProcess';
@@ -9,20 +9,14 @@ import Unloadings from '../components/dashboard/Unloadings';
 import Reports from '../components/dashboard/Reports';
 import Settings from '../components/dashboard/Settings';
 import Employees from '../components/dashboard/Employees';
-import { useLanguage } from '../context/LanguageContext';
+import IncomePredictor from '../components/dashboard/IncomePredict';
 
 const DashboardPage = () => {
-    const { t } = useLanguage();
-    const [activeTab, setActiveTab] = useState(t('dashboard.overview'));
-
-    // Update activeTab when language changes
-    useEffect(() => {
-        setActiveTab(t('dashboard.overview'));
-    }, [t]);
+    const [activeTab, setActiveTab] = useState('Dashboard');
 
     const renderContent = () => {
         switch (activeTab) {
-            case t('dashboard.overview'):
+            case 'Dashboard':
                 return (
                     <>
                         <section className="my-4">
@@ -34,16 +28,18 @@ const DashboardPage = () => {
                         </section>
                     </>
                 );
-            case t('truck.loading'):
+            case 'Loadings':
                 return <Loadings />;
-            case t('truck.unloading'):
+            case 'Unloadings':
                 return <Unloadings />;
-            case t('employee.title'):
+            case 'Employees':
                 return <Employees />;
-            case t('dashboard.reports'):
+            case 'Reports':
                 return <Reports />;
-            case t('dashboard.settings'):
+            case 'Settings':
                 return <Settings />;
+            case 'Income Predictor':
+                return <IncomePredictor />;
             default:
                 return <p>Content not found</p>;
         }
