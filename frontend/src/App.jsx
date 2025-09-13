@@ -2,9 +2,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import DataInputForm from "./pages/dataInputPG";
-import LoginPG from "./pages/LoginPG";
+import LoginPG from "./pages/loginPG";
 import AIresponsePG from "./pages/AIresponsePG";
-import DashboardPG from "./pages/DashboardPG";
+import DashboardPG from "./pages/dashboardPG";
 import DataManagePG from "./pages/DataManagePG";
 import DataManageForm from "./components/datamanage/DataManageTable";
 import { ToastContainer } from "react-toastify";

@@ -75,7 +75,7 @@ const DashboardPage = () => {
     };
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex h-full">
             {/* Mobile menu button */}
             {isMobile && (
                 <button 
@@ -87,10 +87,10 @@ const DashboardPage = () => {
             )}
 
             {/* Sidebar with responsive behavior */}
-            <div className={`fixed lg:relative h-full z-40 transition-transform duration-300 ease-in-out
+            <div className={`fixed top-0 left-0 h-screen z-40 transition-transform duration-300 ease-in-out
                     ${isMobile ? (sidebarOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
                     w-64 lg:w-1/6`}>
-                <div className="h-full bg-[var(--main-red)]">
+                <div className="h-full bg-[var(--main-red)] overflow-y-auto">
                     <DashboardSidebar activeTab={activeTab} setActiveTab={handleTabChange} />
                 </div>
             </div>
@@ -104,7 +104,7 @@ const DashboardPage = () => {
             )}
 
             {/* Main content */}
-            <main className="flex-1 p-4 bg-[#FFF] lg:ml-0 mt-0 lg:mt-0">
+            <main className="flex-1 p-4 bg-[#FFF] ml-0 lg:ml-64 xl:ml-[16.6%] mt-0 lg:mt-0">
                 <DashboardHeader title={activeTab} />
                 {renderContent()}
             </main>
