@@ -11,9 +11,11 @@ import Settings from '../components/dashboard/Settings';
 import Employees from '../components/dashboard/Employees';
 import IncomePredictor from '../components/dashboard/IncomePredict';
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { useLanguage } from '../context/LanguageContext';
 
 const DashboardPage = () => {
-    const [activeTab, setActiveTab] = useState('Dashboard');
+    const { t } = useLanguage();
+    const [activeTab, setActiveTab] = useState('dashboard');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [incomePredictions, setIncomePredictions] = useState([]);
@@ -51,7 +53,7 @@ const DashboardPage = () => {
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'Dashboard':
+            case 'dashboard':
                 return (
                     <>
                         <section className="my-4">
@@ -63,17 +65,17 @@ const DashboardPage = () => {
                         </section>
                     </>
                 );
-            case 'Loadings':
+            case 'loadings':
                 return <Loadings />;
-            case 'Unloadings':
+            case 'unloadings':
                 return <Unloadings />;
-            case 'Employees':
+            case 'employees':
                 return <Employees />;
-            case 'Reports':
+            case 'reports':
                 return <Reports />;
-            case 'Settings':
+            case 'settings':
                 return <Settings />;
-            case 'Income Predictor':
+            case 'incomePredictor':
                 return <IncomePredictor onPredict={updateIncomePredictions} />;
             default:
                 return <p>Content not found</p>;
@@ -111,7 +113,7 @@ const DashboardPage = () => {
 
             {/* Main content */}
             <main className="flex-1 p-4 bg-[#FFF] ml-0 lg:ml-64 xl:ml-[16.6%] mt-0 lg:mt-0">
-                <DashboardHeader title={activeTab} />
+                <DashboardHeader title={t(`dashboard.tabs.${activeTab}`)} />
                 {renderContent()}
             </main>
         </div>

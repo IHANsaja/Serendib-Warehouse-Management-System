@@ -97,6 +97,7 @@ const languages = {
         // Employee efficiency system
         employee: {
             title: 'සේවකයන්',
+            overview: "දළ විශ්ලේෂණය",
             allTime: 'සියලු කාලය',
             thisMonth: 'මේ මාසය',
             searchPlaceholder: 'නම, හැඳුනුම්පත, හෝ භූමිකාව අනුව සොයන්න',
@@ -154,7 +155,71 @@ const languages = {
             profile: 'පැතිකඩ',
             notifications: 'දැනුම්දීම්',
             help: 'උදව්',
-            about: 'ගැන'
+            about: 'ගැන',
+            sidebar: {
+                appTitle: 'සෙරන්ඩිබ් WMS',
+                dashboard: 'පුවරුව',
+                loadings: 'බඩු ගැනීම්',
+                unloadings: 'බඩු බෑම්',
+                employees: 'සේවකයන්',
+                incomePredictor: 'ආදායම් අනාවැකි',
+                reports: 'වාර්තා',
+                settings: 'සැකසුම්',
+                footer: '© {year} සෙරන්ඩිබ් WMS'
+            },
+            tabs: {
+                dashboard: 'පුවරුව',
+                loadings: 'බඩු ගැනීම්',
+                unloadings: 'බඩු බෑම්',
+                employees: 'සේවකයන්',
+                reports: 'වාර්තා',
+                settings: 'සැකසුම්',
+                incomePredictor: 'ආදායම් අනාවැකි'
+            },
+            currentProcess: {
+                loadingBays: 'බඩු ගැනීමේ බේ',
+                unloadingBays: 'බඩු බෑමේ බේ',
+                noOngoing: 'දැනට ක්‍රියාත්මක මෙහෙයුමක් නැත',
+                allLoadingOccupied: 'සියලු බඩු ගැනීමේ බේ භාවිතයේ ඇත - නව මෙහෙයුම් ඉඩ නොමැත',
+                allUnloadingOccupied: 'සියලු බඩු බෑමේ බේ භාවිතයේ ඇත - නව මෙහෙයුම් ඉඩ නොමැත',
+                completed: 'සම්පූර්ණ',
+                noCompleted: 'සම්පූර්ණ වූ මෙහෙයුම් නැත'
+            }
+        },
+        
+        // Tables common
+        tables: {
+            total: ' මුළු',
+            totalLabel: 'මුළු',
+            searchOrderPlaceholder: 'ඇණවුම් අංකයෙන් සොයන්න',
+            pendingList: 'පොරොත්තු ලැයිස්තුව',
+            completedList: 'සම්පූර්ණ ලැයිස්තුව',
+            noData: 'දත්ත සොයාගත නොහැක.',
+            loadingData: 'දත්ත පූරණය වෙමින්...',
+            columns: {
+                orderId: 'ඇණවුම් අංකය',
+                truckNumber: 'ට්‍රක් අංකය',
+                quantity: 'ප්‍රමාණය',
+                organization: 'සංවිධානය',
+                itemCode: 'අයිතම කේතය',
+                date: 'දිනය',
+                productId: 'නිෂ්පාදන අංකය',
+                vehicleNo: 'වාහන අංකය',
+                orderNo: 'ඇණවුම් අංකය',
+                item: 'අයිතමය',
+                type: 'වර්ගය',
+                status: 'තත්වය',
+                action: 'ක්‍රියාව',
+                bayNumber: 'බේ අංකය',
+                arrival: 'ආගමනය',
+                arrivalTime: 'ආගමන වේලාව',
+                exit: 'පිටවීම',
+                exitTime: 'පිටත් වේලාව',
+                bayIn: 'බේ ඇතුල්',
+                bayInTime: 'බේ ඇතුල් වේලාව',
+                bayOut: 'බේ පිටත්',
+                bayOutTime: 'බේ පිටත් වේලාව'
+            }
         },
         
         // Form elements
@@ -317,6 +382,7 @@ const languages = {
         // Employee efficiency system
         employee: {
             title: 'Employees',
+            overview: "Overview",
             allTime: 'All Time',
             thisMonth: 'This Month',
             searchPlaceholder: 'Search by name, ID, or role',
@@ -374,7 +440,71 @@ const languages = {
             profile: 'Profile',
             notifications: 'Notifications',
             help: 'Help',
-            about: 'About'
+            about: 'About',
+            sidebar: {
+                appTitle: 'Serendib WMS',
+                dashboard: 'Dashboard',
+                loadings: 'Loadings',
+                unloadings: 'Unloadings',
+                employees: 'Employees',
+                incomePredictor: 'Income Predictor',
+                reports: 'Reports',
+                settings: 'Settings',
+                footer: '© {year} Serendib WMS'
+            },
+            tabs: {
+                dashboard: 'Dashboard',
+                loadings: 'Loadings',
+                unloadings: 'Unloadings',
+                employees: 'Employees',
+                reports: 'Reports',
+                settings: 'Settings',
+                incomePredictor: 'Income Predictor'
+            },
+            currentProcess: {
+                loadingBays: 'LOADING BAYS',
+                unloadingBays: 'UNLOADING BAYS',
+                noOngoing: 'No ongoing operation',
+                allLoadingOccupied: 'All loading bays occupied - No new operations allowed',
+                allUnloadingOccupied: 'All unloading bays occupied - No new operations allowed',
+                completed: 'COMPLETED',
+                noCompleted: 'No completed operations'
+            }
+        },
+        
+        // Tables common
+        tables: {
+            total: 'Total',
+            totalLabel: 'Total',
+            searchOrderPlaceholder: 'Enter Order ID to Search',
+            pendingList: 'PENDING LIST',
+            completedList: 'COMPLETED LIST',
+            noData: 'No data found.',
+            loadingData: 'Loading data...',
+            columns: {
+                orderId: 'Order ID',
+                truckNumber: 'Truck Number',
+                quantity: 'Quantity',
+                organization: 'Organization',
+                itemCode: 'Item Code',
+                date: 'Date',
+                productId: 'Product ID',
+                vehicleNo: 'Vehicle Number',
+                orderNo: 'Order No',
+                item: 'Item',
+                type: 'Type',
+                status: 'Status',
+                action: 'Action',
+                bayNumber: 'Bay Number',
+                arrival: 'Arrival',
+                arrivalTime: 'Arrival Time',
+                exit: 'Exit',
+                exitTime: 'Exit Time',
+                bayIn: 'Bay-In',
+                bayInTime: 'Bay-In Time',
+                bayOut: 'Bay-Out',
+                bayOutTime: 'Bay-Out Time'
+            }
         },
         
         // Form elements
