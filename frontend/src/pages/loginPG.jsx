@@ -21,7 +21,6 @@ const LoginPG = () => {
       <div className="absolute top-4 right-4"><LanguageToggle /></div>
       <div className="login-container">
         <h2 className="heading font-black text-3xl text-center">{t("login.title")}</h2>
-        <p className="text-center mt-1 text-sm opacity-80">{t("login.subtitle")}</p>
         <div className="mt-4">
           <RoleSelector role={role} setRole={setLocalRole} />
         </div>

@@ -9,7 +9,6 @@ const LoginForm = ({ role, onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Logging in as:", role, username);
 
     // Basic client-side validation with user-friendly toasts
     if (!username.trim() && !password.trim()) {
@@ -44,7 +43,6 @@ const LoginForm = ({ role, onLogin }) => {
       }
 
       if (response.ok) {
-        console.log("Login successful:", data);
         toast.success(t("login.toastLoginSuccess"));
         onLogin?.(data.user);
       } else {
@@ -52,10 +50,10 @@ const LoginForm = ({ role, onLogin }) => {
         const message =
           data?.error ||
           (response.status === 400 || response.status === 401
-            ? t("login.toastInvalidCredentials")
+            ? toast.error(t("login.toastInvalidCredentials"))
             : response.status === 403
-            ? t("login.toastNoPermission")
-            : t("login.toastLoginFailed"));
+            ? toast.error(t("login.toastNoPermission"))
+            : toast.error(t("login.toastLoginFailed")));
         toast.error(message);
       }
     } catch (err) {
