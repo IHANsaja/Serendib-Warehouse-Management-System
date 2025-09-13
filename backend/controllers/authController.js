@@ -37,20 +37,10 @@ const loginUser = async (req, res) => {
       return res.status(500).json({ error: 'Session not initialized' });
     }
 
-    // Create login session record
-    const sessionData = {
-      EmployeeID: user.EmployeeID,
-      LoginTime: new Date()
-    };
-    
-    const sessionResult = await authModel.createLoginSession(sessionData);
-    const sessionID = sessionResult.insertId;
-
     req.session.user = {
       id: user.EmployeeID,
       name: user.Name,
-      role: user.Role,
-      sessionID: sessionID
+      role: user.Role
     };
 
     console.log("✅ Login successful:", req.session.user);
@@ -75,30 +65,12 @@ const checkSession = (req, res) => {
   }
 };
 
-const logoutUser = async (req, res) => {
-  try {
-    if (req.session && req.session.user && req.session.user.sessionID) {
-      // Update logout time and calculate duration
-      await authModel.updateLogoutSession(req.session.user.sessionID);
-      
-      // Update work hours for the employee
-      await authModel.updateEmployeeWorkHours(req.session.user.id, req.session.user.sessionID);
-    }
-
-    req.session.destroy(err => {
-      if (err) return res.status(500).json({ error: 'Logout failed' });
-      res.clearCookie('connect.sid');
-      res.json({ message: 'Logged out successfully' });
-    });
-  } catch (error) {
-    console.error("Logout error:", error);
-    // Still destroy session even if update fails
-    req.session.destroy(err => {
-      if (err) return res.status(500).json({ error: 'Logout failed' });
-      res.clearCookie('connect.sid');
-      res.json({ message: 'Logged out successfully' });
-    });
-  }
+const logoutUser = (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ error: 'Logout failed' });
+    res.clearCookie('connect.sid');
+    res.json({ message: 'Logged out successfully' });
+  });
 };
 
 module.exports = {
