@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../components/dataInput/Header";
 import OrderForm from "../components/dataInput/OrderForm";
 import DataManageForm from "../components/datamanage/DataManageTable";
-import Sidebar from "../components/common/Sidebar";
+import Sidebar from "../components/common/sidebar";
 import BayManagement from "../components/datamanage/BayManagement";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,11 +16,22 @@ const DataInputPG = () => {
   const eoId = user?.employeeId; // From logged-in Executive
 
   return (
-    <>
-      <Header />
-      <div className="flex">
-        <Sidebar selected={selectedComponent} onSelect={setSelectedComponent} />
-        <main className="w-full p-4 md:p-6 bg-[#FEF4F3] min-h-screen">
+    <div className="flex flex-col h-screen">
+      {/* Sticky Header */}
+      <header className="sticky top-0 z-50">
+        <Header />
+      </header>
+      
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sticky Sidebar */}
+        <div className="flex flex-col h-full">
+          <aside className="h-full">
+            <Sidebar selected={selectedComponent} onSelect={setSelectedComponent} />
+          </aside>
+        </div>
+        
+        {/* Scrollable Content */}
+        <main className="flex-1 p-4 md:p-6 bg-[#FEF4F3] overflow-y-auto">
           {selectedComponent === "OrderForm" && <OrderForm />}
           {selectedComponent === "DataManageForm" && (
             <DataManageForm role="Executive Officer" type="delivery" />
@@ -30,7 +41,7 @@ const DataInputPG = () => {
           )}
         </main>
       </div>
-    </>
+    </div>
   );
 };
 
