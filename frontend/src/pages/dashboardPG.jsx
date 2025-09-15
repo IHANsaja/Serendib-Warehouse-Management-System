@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import CurrentProcess from '../components/dashboard/CurrentProcess';
@@ -10,49 +10,110 @@ import Reports from '../components/dashboard/Reports';
 import Settings from '../components/dashboard/Settings';
 import Employees from '../components/dashboard/Employees';
 import IncomePredictor from '../components/dashboard/IncomePredict';
+import { FaBars, FaTimes } from 'react-icons/fa';
+import { useLanguage } from '../context/LanguageContext';
 
 const DashboardPage = () => {
-    const [activeTab, setActiveTab] = useState('Dashboard');
+    const { t } = useLanguage();
+    const [activeTab, setActiveTab] = useState('dashboard');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [incomePredictions, setIncomePredictions] = useState([]);
+
+    // Check screen size and update state
+    useEffect(() => {
+        const checkIfMobile = () => {
+            const mobile = window.innerWidth < 1024;
+            setIsMobile(mobile);
+            if (!mobile) {
+                setSidebarOpen(false);
+            }
+        };
+
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+        return () => window.removeEventListener('resize', checkIfMobile);
+    }, []);
+
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
+
+    const handleTabChange = (tabName) => {
+        setActiveTab(tabName);
+        if (isMobile) {
+            setSidebarOpen(false);
+        }
+    };
+
+    // Function to update predictions from IncomePredictor
+    const updateIncomePredictions = (predictions) => {
+        setIncomePredictions(predictions);
+    };
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'Dashboard':
+            case 'dashboard':
                 return (
                     <>
                         <section className="my-4">
                             <CurrentProcess />
                         </section>
-                        <section className="grid grid-cols-1 gap-6">
+                        <section className="flex flex-col gap-6">
                             <ProcessAccuracy />
-                            <ProcessStatus />
+                            <ProcessStatus predictions={incomePredictions} />
                         </section>
                     </>
                 );
-            case 'Loadings':
+            case 'loadings':
                 return <Loadings />;
-            case 'Unloadings':
+            case 'unloadings':
                 return <Unloadings />;
-            case 'Employees':
+            case 'employees':
                 return <Employees />;
-            case 'Reports':
+            case 'reports':
                 return <Reports />;
-            case 'Settings':
+            case 'settings':
                 return <Settings />;
-            case 'Income Predictor':
-                return <IncomePredictor />;
+            case 'incomePredictor':
+                return <IncomePredictor onPredict={updateIncomePredictions} />;
             default:
                 return <p>Content not found</p>;
         }
     };
 
     return (
-        <div className="flex min-h-screen">
-            <aside className="w-1/6">
-                <DashboardSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-            </aside>
-            <main className="w-5/6 p-4 bg-[#FFF]">
-                {/* ✅ Passing activeTab as title */}
-                <DashboardHeader title={activeTab} />
+        <div className="flex h-full">
+            {/* Mobile menu button */}
+            {isMobile && (
+                <button 
+                    onClick={toggleSidebar}
+                    className="fixed top-4 left-4 z-50 p-2 bg-[var(--main-red)] text-white rounded-md shadow-lg"
+                >
+                    {sidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+                </button>
+            )}
+
+            {/* Sidebar with responsive behavior */}
+            <div className={`fixed top-0 left-0 h-screen z-40 transition-transform duration-300 ease-in-out
+                    ${isMobile ? (sidebarOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
+                    w-64 lg:w-1/6`}>
+                <div className="h-full bg-[var(--main-red)] overflow-y-auto">
+                    <DashboardSidebar activeTab={activeTab} setActiveTab={handleTabChange} />
+                </div>
+            </div>
+
+            {/* Overlay for mobile when sidebar is open */}
+            {isMobile && sidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30"
+                    onClick={() => setSidebarOpen(false)}
+                ></div>
+            )}
+
+            {/* Main content */}
+            <main className="flex-1 p-4 bg-[#FFF] ml-0 lg:ml-64 xl:ml-[16.6%] mt-0 lg:mt-0">
+                <DashboardHeader title={t(`dashboard.tabs.${activeTab}`)} />
                 {renderContent()}
             </main>
         </div>

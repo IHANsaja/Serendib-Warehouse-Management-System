@@ -97,6 +97,7 @@ const languages = {
         // Employee efficiency system
         employee: {
             title: 'සේවකයන්',
+            overview: "දළ විශ්ලේෂණය",
             allTime: 'සියලු කාලය',
             thisMonth: 'මේ මාසය',
             searchPlaceholder: 'නම, හැඳුනුම්පත, හෝ භූමිකාව අනුව සොයන්න',
@@ -108,7 +109,6 @@ const languages = {
             totalHours: 'මුළු පැය',
             avgEfficiency: 'සාමාන්‍ය කාර්යක්ෂමතාව',
             workHours: 'වැඩ පැය',
-            totalTrucks: 'මුළු ට්‍රක් රථ',
             sessions: 'සැසි',
             loadings: 'බඩු ගැනීම්',
             unloadings: 'බඩු බෑම්',
@@ -155,7 +155,71 @@ const languages = {
             profile: 'පැතිකඩ',
             notifications: 'දැනුම්දීම්',
             help: 'උදව්',
-            about: 'ගැන'
+            about: 'ගැන',
+            sidebar: {
+                appTitle: 'සෙරන්ඩිබ් WMS',
+                dashboard: 'පුවරුව',
+                loadings: 'බඩු ගැනීම්',
+                unloadings: 'බඩු බෑම්',
+                employees: 'සේවකයන්',
+                incomePredictor: 'ආදායම් අනාවැකි',
+                reports: 'වාර්තා',
+                settings: 'සැකසුම්',
+                footer: '© {year} සෙරන්ඩිබ් WMS'
+            },
+            tabs: {
+                dashboard: 'පුවරුව',
+                loadings: 'බඩු ගැනීම්',
+                unloadings: 'බඩු බෑම්',
+                employees: 'සේවකයන්',
+                reports: 'වාර්තා',
+                settings: 'සැකසුම්',
+                incomePredictor: 'ආදායම් අනාවැකි'
+            },
+            currentProcess: {
+                loadingBays: 'බඩු ගැනීමේ බේ',
+                unloadingBays: 'බඩු බෑමේ බේ',
+                noOngoing: 'දැනට ක්‍රියාත්මක මෙහෙයුමක් නැත',
+                allLoadingOccupied: 'සියලු බඩු ගැනීමේ බේ භාවිතයේ ඇත - නව මෙහෙයුම් ඉඩ නොමැත',
+                allUnloadingOccupied: 'සියලු බඩු බෑමේ බේ භාවිතයේ ඇත - නව මෙහෙයුම් ඉඩ නොමැත',
+                completed: 'සම්පූර්ණ',
+                noCompleted: 'සම්පූර්ණ වූ මෙහෙයුම් නැත'
+            }
+        },
+        
+        // Tables common
+        tables: {
+            total: ' මුළු',
+            totalLabel: 'මුළු',
+            searchOrderPlaceholder: 'ඇණවුම් අංකයෙන් සොයන්න',
+            pendingList: 'පොරොත්තු ලැයිස්තුව',
+            completedList: 'සම්පූර්ණ ලැයිස්තුව',
+            noData: 'දත්ත සොයාගත නොහැක.',
+            loadingData: 'දත්ත පූරණය වෙමින්...',
+            columns: {
+                orderId: 'ඇණවුම් අංකය',
+                truckNumber: 'ට්‍රක් අංකය',
+                quantity: 'ප්‍රමාණය',
+                organization: 'සංවිධානය',
+                itemCode: 'අයිතම කේතය',
+                date: 'දිනය',
+                productId: 'නිෂ්පාදන අංකය',
+                vehicleNo: 'වාහන අංකය',
+                orderNo: 'ඇණවුම් අංකය',
+                item: 'අයිතමය',
+                type: 'වර්ගය',
+                status: 'තත්වය',
+                action: 'ක්‍රියාව',
+                bayNumber: 'බේ අංකය',
+                arrival: 'ආගමනය',
+                arrivalTime: 'ආගමන වේලාව',
+                exit: 'පිටවීම',
+                exitTime: 'පිටත් වේලාව',
+                bayIn: 'බේ ඇතුල්',
+                bayInTime: 'බේ ඇතුල් වේලාව',
+                bayOut: 'බේ පිටත්',
+                bayOutTime: 'බේ පිටත් වේලාව'
+            }
         },
         
         // Form elements
@@ -187,6 +251,42 @@ const languages = {
             loginRequired: 'පිවිසීම අවශ්‍යයි',
             confirmDelete: 'මෙය මකා දැමීමට ඔබට විශ්වාසද?',
             unsavedChanges: 'සුරකින ලද නොවන වෙනස්කම් තිබේ. ඔබට ඉදිරියට යාමට අවශ්‍යද?'
+        },
+        
+        // Login page
+        login: {
+            title: 'සෙරන්ඩිබ් ගබඩා කළමනාකරණ පද්ධතිය',
+            subtitle: 'පිවිසීමට ඔබගේ තොරතුරු ඇතුල් කරන්න',
+            usernamePlaceholder: 'පරිශීලක නාමය',
+            passwordPlaceholder: 'මුරපදය',
+            loginButton: 'පිවිසෙන්න',
+            roleLabel: 'භූමිකාව තෝරන්න',
+            toastEnterUsernamePassword: 'කරුණාකර ඔබගේ පරිශීලක නාමය සහ මුරපදය ඇතුල් කරන්න.',
+            toastEnterUsername: 'කරුණාකර ඔබගේ පරිශීලක නාමය ඇතුල් කරන්න.',
+            toastEnterPassword: 'කරුණාකර ඔබගේ මුරපදය ඇතුල් කරන්න.',
+            toastLoginSuccess: 'පිවිසීම සාර්ථකයි!',
+            toastInvalidCredentials: 'අවලංගු පරිශීලක නාමය, මුරපදය, හෝ භූමිකාව.',
+            toastNoPermission: 'මෙම ගිණුමට ප්‍රවේශ වීමට ඔබට අවසර නොමැත.',
+            toastLoginFailed: 'පිවිසීම අසාර්ථක විය. නැවත උත්සාහ කරන්න.',
+            toastNetworkError: 'ජාල දෝෂයක්. කරුණාකර ඔබගේ සම්බන්ධතාවය පරීක්ෂා කර නැවත උත්සාහ කරන්න.'
+        },
+        
+        // Roles display labels
+        roles: {
+            administrator: 'පරිපාලක',
+            executiveOfficer: 'විධායක නිලධාරී',
+            securityOfficer: 'ආරක්ෂක නිලධාරී',
+            inventoryOfficer: 'භාණ්ඩ ගණන් නිලධාරී'
+        },
+        
+        // Headers and common titles
+        headers: {
+            appTitle: 'සෙරන්ඩිබ් WMS',
+            dataManageTitle: 'සෙරන්ඩිබ් WMS දත්ත කළමනාකරණය',
+            securityTitle: 'සෙරන්ඩිබ් WMS - ආරක්ෂක නිලධාරී',
+            aiTitle: 'සෙරන්ඩිබ් AI',
+            realTimeCamera: 'කාලීන කැමරා දසුන',
+            loggedInAs: 'ඇතුල් වී ඇත්තේ'
         }
     },
     
@@ -282,6 +382,7 @@ const languages = {
         // Employee efficiency system
         employee: {
             title: 'Employees',
+            overview: "Overview",
             allTime: 'All Time',
             thisMonth: 'This Month',
             searchPlaceholder: 'Search by name, ID, or role',
@@ -293,7 +394,6 @@ const languages = {
             totalHours: 'Total Hours',
             avgEfficiency: 'Avg Efficiency',
             workHours: 'Work Hours',
-            totalTrucks: 'Total Trucks',
             sessions: 'Sessions',
             loadings: 'Loadings',
             unloadings: 'Unloadings',
@@ -340,7 +440,71 @@ const languages = {
             profile: 'Profile',
             notifications: 'Notifications',
             help: 'Help',
-            about: 'About'
+            about: 'About',
+            sidebar: {
+                appTitle: 'Serendib WMS',
+                dashboard: 'Dashboard',
+                loadings: 'Loadings',
+                unloadings: 'Unloadings',
+                employees: 'Employees',
+                incomePredictor: 'Income Predictor',
+                reports: 'Reports',
+                settings: 'Settings',
+                footer: '© {year} Serendib WMS'
+            },
+            tabs: {
+                dashboard: 'Dashboard',
+                loadings: 'Loadings',
+                unloadings: 'Unloadings',
+                employees: 'Employees',
+                reports: 'Reports',
+                settings: 'Settings',
+                incomePredictor: 'Income Predictor'
+            },
+            currentProcess: {
+                loadingBays: 'LOADING BAYS',
+                unloadingBays: 'UNLOADING BAYS',
+                noOngoing: 'No ongoing operation',
+                allLoadingOccupied: 'All loading bays occupied - No new operations allowed',
+                allUnloadingOccupied: 'All unloading bays occupied - No new operations allowed',
+                completed: 'COMPLETED',
+                noCompleted: 'No completed operations'
+            }
+        },
+        
+        // Tables common
+        tables: {
+            total: 'Total',
+            totalLabel: 'Total',
+            searchOrderPlaceholder: 'Enter Order ID to Search',
+            pendingList: 'PENDING LIST',
+            completedList: 'COMPLETED LIST',
+            noData: 'No data found.',
+            loadingData: 'Loading data...',
+            columns: {
+                orderId: 'Order ID',
+                truckNumber: 'Truck Number',
+                quantity: 'Quantity',
+                organization: 'Organization',
+                itemCode: 'Item Code',
+                date: 'Date',
+                productId: 'Product ID',
+                vehicleNo: 'Vehicle Number',
+                orderNo: 'Order No',
+                item: 'Item',
+                type: 'Type',
+                status: 'Status',
+                action: 'Action',
+                bayNumber: 'Bay Number',
+                arrival: 'Arrival',
+                arrivalTime: 'Arrival Time',
+                exit: 'Exit',
+                exitTime: 'Exit Time',
+                bayIn: 'Bay-In',
+                bayInTime: 'Bay-In Time',
+                bayOut: 'Bay-Out',
+                bayOutTime: 'Bay-Out Time'
+            }
         },
         
         // Form elements
@@ -372,11 +536,48 @@ const languages = {
             loginRequired: 'Login required',
             confirmDelete: 'Are you sure you want to delete this?',
             unsavedChanges: 'You have unsaved changes. Do you want to continue?'
+        },
+        
+        // Login page
+        login: {
+            title: 'Serendib Warehouse Management System',
+            subtitle: 'Enter your credentials to sign in',
+            usernamePlaceholder: 'Username',
+            passwordPlaceholder: 'Password',
+            loginButton: 'Login',
+            roleLabel: 'Select Role',
+            toastEnterUsernamePassword: 'Please enter your username and password.',
+            toastEnterUsername: 'Please enter your username.',
+            toastEnterPassword: 'Please enter your password.',
+            toastLoginSuccess: 'Login successful!',
+            toastInvalidCredentials: 'Invalid username, password, or role.',
+            toastNoPermission: "You don't have permission to access this account.",
+            toastLoginFailed: 'Login failed. Please try again.',
+            toastNetworkError: 'Network error. Please check your connection and try again.'
+        },
+        
+        // Roles display labels
+        roles: {
+            administrator: 'Administrator',
+            executiveOfficer: 'Executive Officer',
+            securityOfficer: 'Security Officer',
+            inventoryOfficer: 'Inventory Officer'
+        },
+        
+        // Headers and common titles
+        headers: {
+            appTitle: 'Serendib WMS',
+            dataManageTitle: 'Serendib WMS DataManage',
+            securityTitle: 'Serendib WMS - Security Officer',
+            aiTitle: 'SERENDIB AI',
+            realTimeCamera: 'Real-Time Camera View',
+            loggedInAs: 'Logged in as'
         }
     }
 };
 
 // Language context provider
+// eslint-disable-next-line react/prop-types
 export const LanguageProvider = ({ children }) => {
     const [currentLanguage, setCurrentLanguage] = useState('sinhala');
     

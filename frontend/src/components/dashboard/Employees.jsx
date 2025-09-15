@@ -4,8 +4,10 @@ import { FaSearch, FaUserTie } from 'react-icons/fa';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Employees = () => {
+    const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
     const [employees, setEmployees] = useState([]); // State to hold data from API
 
@@ -33,14 +35,14 @@ const Employees = () => {
     return (
         <div className="bg-[var(--theme-white)] p-6 rounded-2xl shadow-lg space-y-6">
             <h1 className="text-3xl font-bold text-[var(--main-red)] mb-6 text-center md:text-left flex items-center gap-2">
-                <FaUserTie className="text-[var(--main-red)]" /> Employee Performance Overview
+                <FaUserTie className="text-[var(--main-red)]" /> {t('employee.title')} {t('employee.overview') || ''}
             </h1>
 
             <div className="flex flex-row justify-center items-center mb-6 relative w-full md:w-1/3">
                 <FaSearch className="absolute left-3 top-5 text-[var(--main-red)] opacity-50" />
                 <input
                     type="text"
-                    placeholder="Search by name, ID, or role"
+                    placeholder={t('employee.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full ml-5 pl-10 pr-4 py-3 border border-[var(--main-red)] rounded-2xl text-base 
@@ -83,10 +85,10 @@ const Employees = () => {
                                     />
                                 </motion.div>
                                 <div className="text-sm space-y-1">
-                                    <p>Loadings: <span className="font-medium">{employee.loadings}</span></p>
-                                    <p>Unloadings: <span className="font-medium">{employee.unloadings}</span></p>
-                                    <p>Efficiency: <span className="font-semibold text-[var(--main-red)]">{performanceValue}%</span></p>
-                                    <p className="text-xs text-gray-500">Period: {employee.period}</p>
+                                    <p>{t('employee.loadings')}: <span className="font-medium">{employee.loadings}</span></p>
+                                    <p>{t('employee.unloadings')}: <span className="font-medium">{employee.unloadings}</span></p>
+                                    <p>{t('employee.efficiency')}: <span className="font-semibold text-[var(--main-red)]">{performanceValue}%</span></p>
+                                    <p className="text-xs text-gray-500">{t('employee.period')}: {employee.period}</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -94,7 +96,7 @@ const Employees = () => {
                 })}
                 {filteredEmployees.length === 0 && (
                     <div className="col-span-full text-center text-[var(--main-red)] font-semibold">
-                        No employees found.
+                        {t('employee.noEmployeesFound')}
                     </div>
                 )}
             </div>

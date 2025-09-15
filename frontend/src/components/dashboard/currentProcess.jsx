@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const CurrentProcess = () => {
     const [processData, setProcessData] = useState({
@@ -88,11 +89,13 @@ const CurrentProcess = () => {
         return operations[bayIndex] || null;
     };
 
+    const { t } = useLanguage();
+
     if (loading) {
         return (
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
                 <div className="flex flex-col justify-center items-center bg-[#A43424] text-white p-4 rounded-2xl">
-                    <h3 className="text-lg font-semibold mb-2">Loading...</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t('common.loading')}</h3>
                 </div>
             </section>
         );
@@ -102,7 +105,7 @@ const CurrentProcess = () => {
         return (
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
                 <div className="flex flex-col justify-center items-center bg-[#A43424] text-white p-4 rounded-2xl">
-                    <h3 className="text-lg font-semibold mb-2">Error: {error}</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t('common.error')}: {error}</h3>
                 </div>
             </section>
         );
@@ -112,7 +115,7 @@ const CurrentProcess = () => {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
             <div className="flex flex-col justify-center items-center bg-[#A43424] text-white p-4 rounded-2xl">
                 <h3 className="text-lg font-semibold mb-2">
-                    LOADING BAYS 
+                    {t('dashboard.currentProcess.loadingBays')} 
                     <span className="text-sm font-normal ml-2">
                         ({bayAvailability.loading.occupiedBays}/{bayAvailability.loading.totalBays})
                     </span>
@@ -126,7 +129,7 @@ const CurrentProcess = () => {
                                 {operation ? (
                                     formatOperationText(operation)
                                 ) : (
-                                    "No ongoing operation"
+                                    t('dashboard.currentProcess.noOngoing')
                                 )}
                             </div>
                         );
@@ -134,13 +137,13 @@ const CurrentProcess = () => {
                 </div>
                 {bayAvailability.loading.allOccupied && (
                     <div className="mt-2 text-yellow-300 text-sm font-semibold">
-                        ⚠️ All loading bays occupied - No new operations allowed
+                        ⚠️ {t('dashboard.currentProcess.allLoadingOccupied')}
                     </div>
                 )}
             </div>
             <div className="flex flex-col justify-center items-center bg-[#A43424] text-white p-4 rounded-2xl">
                 <h3 className="text-lg font-semibold mb-2">
-                    UNLOADING BAYS 
+                    {t('dashboard.currentProcess.unloadingBays')} 
                     <span className="text-sm font-normal ml-2">
                         ({bayAvailability.unloading.occupiedBays}/{bayAvailability.unloading.totalBays})
                     </span>
@@ -154,7 +157,7 @@ const CurrentProcess = () => {
                                 {operation ? (
                                     formatOperationText(operation)
                                 ) : (
-                                    "No ongoing operation"
+                                    t('dashboard.currentProcess.noOngoing')
                                 )}
                             </div>
                     );
@@ -162,12 +165,12 @@ const CurrentProcess = () => {
                 </div>
                 {bayAvailability.unloading.allOccupied && (
                     <div className="mt-2 text-yellow-300 text-sm font-semibold">
-                        ⚠️ All unloading bays occupied - No new operations allowed
+                        ⚠️ {t('dashboard.currentProcess.allUnloadingOccupied')}
                     </div>
                 )}
             </div>
             <div className="flex flex-col justify-center items-center bg-[#A43424] text-white p-4 rounded-2xl col-span-2">
-                <h3 className="text-lg font-semibold mb-2">COMPLETED</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('dashboard.currentProcess.completed')}</h3>
                 <div className="space-y-2 w-full">
                     {processData.completed.length > 0 ? (
                         processData.completed.slice(0, 6).map((operation, index) => (
@@ -176,7 +179,7 @@ const CurrentProcess = () => {
                             </p>
                         ))
                     ) : (
-                        <p className="bay-area">No completed operations</p>
+                        <p className="bay-area">{t('dashboard.currentProcess.noCompleted')}</p>
                     )}
                 </div>
             </div>

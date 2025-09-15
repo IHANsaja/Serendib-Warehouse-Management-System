@@ -1,5 +1,5 @@
 // backend/controllers/aidatacontroller.js
-const { insertVerification, getAllVerifications } = require('../models/aidatamodel');
+const { insertVerification, getAllVerifications, getCurrentVisitId } = require('../models/aidatamodel');
 
 const verifyCount = async (req, res) => {
   try {
@@ -21,4 +21,17 @@ const fetchVerifications = async (req, res) => {
   }
 };
 
-module.exports = { verifyCount, fetchVerifications };
+const fetchCurrentVisit = async (req, res) => {
+  try {
+    const visitId = await getCurrentVisitId();
+    if (visitId) {
+      return res.json({ visitId, message: 'Truck is on the bay' });
+    }
+    return res.json({ visitId: null, message: 'Truck visit ID is not available because no truck is on the bay (test run).' });
+  } catch (err) {
+    console.error('Error in fetchCurrentVisit:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+module.exports = { verifyCount, fetchVerifications, fetchCurrentVisit };
