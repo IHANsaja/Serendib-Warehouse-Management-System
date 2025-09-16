@@ -34,12 +34,12 @@ CREATE TABLE BAY (
 );
 
 -- Insert sample bays (3 for loading, 3 for unloading)
-INSERT INTO BAY VALUES (1, 'Bay 01', 'Loading Bay A - Main Entrance', 'Loading', 'Available');
-INSERT INTO BAY VALUES (2, 'Bay 02', 'Loading Bay B - Side Entrance', 'Loading', 'Available');
-INSERT INTO BAY VALUES (3, 'Bay 03', 'Loading Bay C - Rear Entrance', 'Loading', 'Available');
-INSERT INTO BAY VALUES (4, 'Bay 04', 'Unloading Bay D - Main Exit', 'Unloading', 'Available');
-INSERT INTO BAY VALUES (5, 'Bay 05', 'Unloading Bay E - Side Exit', 'Unloading', 'Available');
-INSERT INTO BAY VALUES (6, 'Bay 06', 'Unloading Bay F - Rear Exit', 'Unloading', 'Available');
+INSERT INTO BAY VALUES (1, 'Bay 01', 'Loading Bay A', 'Loading', 'Available');
+INSERT INTO BAY VALUES (2, 'Bay 02', 'Loading Bay B', 'Loading', 'Available');
+INSERT INTO BAY VALUES (3, 'Bay 03', 'Loading Bay C', 'Loading', 'Available');
+INSERT INTO BAY VALUES (4, 'Bay 04', 'Unloading Bay D', 'Unloading', 'Available');
+INSERT INTO BAY VALUES (5, 'Bay 05', 'Unloading Bay E', 'Unloading', 'Available');
+INSERT INTO BAY VALUES (6, 'Bay 06', 'Unloading Bay F', 'Unloading', 'Available');
 
 -- Insert sample companies
 INSERT INTO COMPANY VALUES (1, 'Serendib Tea Company', '123 Tea Garden Road, Kandy, Sri Lanka', 'tea@serendib.com', 'Ravi Perera', '0771234567');
