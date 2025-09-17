@@ -79,7 +79,7 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
 
   const captureBase64 = () => {
     const video = videoRef.current;
-    if (!video || video.readyState < 2) return null; // HAVE_CURRENT_DATA
+    if (!video || video.readyState < 2) return null; 
     const off = offscreenRef.current || document.createElement("canvas");
     offscreenRef.current = off;
     off.width = video.videoWidth;
