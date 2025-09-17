@@ -1,10 +1,12 @@
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import LanguageToggle from "../common/LanguageToggle";
+import { useNavigate } from "react-router-dom";
 
 const SecurityHeader = () => {
   const { logout } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   return (
     <div className="w-full p-4 text-center bg-[var(--main-red)]">
       <div className="max-w-7xl mx-auto flex items-center justify-between">

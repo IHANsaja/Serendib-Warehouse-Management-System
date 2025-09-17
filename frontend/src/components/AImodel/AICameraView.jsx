@@ -5,24 +5,21 @@ import { useAIStatus } from "../../context/AIStatusContext";
 const AICameraView = () => {
   const feedRef = useRef(null);
   const { updateStatus } = useAIStatus();
-  const [sourceType, setSourceType] = useState("camera"); // 'camera' | 'video'
+  const [sourceType, setSourceType] = useState("camera"); 
   const [videoUrl, setVideoUrl] = useState(null);
   const [running, setRunning] = useState(false);
   const [uniqueTotal, setUniqueTotal] = useState(0);
   const seenIdsRef = useRef(new Set());
 
-  const onDetections = (predictions) => {
-    // predictions contain assigned id from LiveCameraFeed tracker
+  const onDetections = (predictions, meta) => {
+    // Use unique ID-based total from LiveCameraFeed (sacks moving right->left)
     const frameCount = predictions?.length || 0;
-    if (predictions && predictions.length) {
-      for (const p of predictions) {
-        if (p.id != null) seenIdsRef.current.add(p.id);
-      }
-      const uniq = seenIdsRef.current.size;
-      setUniqueTotal(uniq);
-      updateStatus(`Running: Unique sacks so far ${uniq} (this frame ${frameCount})`, Math.min(99, uniq));
+    const count = meta?.count ?? 0;
+    setUniqueTotal(count);
+    if (frameCount > 0) {
+      updateStatus(`Running: Count ${count} (this frame detections ${frameCount})`, Math.min(99, count));
     } else {
-      updateStatus(`Running: No sacks detected`, 10);
+      updateStatus(`Running: Count ${count} (no detections this frame)`, Math.min(99, count));
     }
   };
 
@@ -74,7 +71,7 @@ const AICameraView = () => {
           )}
         </div>
           <div className="mt-2 text-sm text-[color:var(--theme-white)] bg-[color:var(--darkest-red)] p-2 rounded-md">
-              Sacks detected this session: <span className="font-semibold">{uniqueTotal}</span>
+              Sacks counted this session: <span className="font-semibold">{uniqueTotal}</span>
           </div>
         <div className="flex items-center">
           <button
@@ -95,7 +92,7 @@ const AICameraView = () => {
       </div>
 
       <div className="flex justify-center items-center h-full w-full -translate-y-8">
-        <LiveCameraFeed ref={feedRef} onDetections={onDetections} sourceType={sourceType} videoUrl={videoUrl} />
+        <LiveCameraFeed ref={feedRef} onDetections={onDetections} sourceType={sourceType} videoUrl={videoUrl} fps={1} />
       </div>
     </div>
   );

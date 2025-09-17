@@ -28,25 +28,25 @@ const DataManageTable = ({ role }) => {
   }, []);
 
   // Fetch available bays
-  useEffect(() => {
-    const fetchBays = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/bay/bays?type=${activeTab === 'loading' ? 'Loading' : 'Unloading'}`, {
-          credentials: "include",
-        });
-        
-        if (response.ok) {
-          const bays = await response.json();
-          console.log("Available bays for", activeTab, ":", bays);
-          setAvailableBays(bays);
-        } else {
-          console.error("Failed to fetch bays:", response.status);
-        }
-      } catch (error) {
-        console.error("Error fetching bays:", error);
+  const fetchBays = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/bay/bays?type=${activeTab === 'loading' ? 'Loading' : 'Unloading'}`, {
+        credentials: "include",
+      });
+      
+      if (response.ok) {
+        const bays = await response.json();
+        console.log("Available bays for", activeTab, ":", bays);
+        setAvailableBays(bays);
+      } else {
+        console.error("Failed to fetch bays:", response.status);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching bays:", error);
+    }
+  };
 
+  useEffect(() => {
     if (role === "Executive Officer") {
       fetchBays();
     }
@@ -153,7 +153,7 @@ const DataManageTable = ({ role }) => {
           [visitId]: bayId
         }));
         // Refresh data to show updated bay assignment
-        await fetchTruckVisits();
+        await Promise.all([fetchTruckVisits(), fetchBays()]);
         toast.success("Bay assigned successfully!");
       } else {
         const errorData = await response.json();
@@ -299,7 +299,7 @@ const DataManageTable = ({ role }) => {
   };
 
   return (
-    <div className="bg-[var(--table-row-two)] font-[Noto Sans Sinhala] w-full flex flex-col items-center overflow-x-auto">
+    <div className="bg-[var(--table-row-two)] font-[Noto Sans Sinhala] w-full flex flex-col items-center">
       <div className="w-full flex justify-center h-full">
         <button
           className={`w-1/2 py-3 text-lg font-semibold text-center cursor-pointer ${
@@ -342,234 +342,240 @@ const DataManageTable = ({ role }) => {
         </div>
       )}
 
-      <div className="w-full overflow-x-auto">
-        <table className="w-full mt-6 text-center">
-          <thead>
-            <tr className="table-header bg-[var(--main-red)] text-[var(--theme-white)]">
-              <th className="p-3">Item Code</th>
-              <th className="p-3">Item</th>
-              <th className="p-3">Quantity</th>
-              <th className="p-3">Vehicle Number</th>
-              <th className="p-3">Driver</th>
-              <th className="p-3">Company</th>
-              <th className="p-3">Estimated Arrival</th>
-              <th className="p-3">Estimated Leave</th>
+      <table className="w-full mt-6 text-center">
+        <thead>
+          <tr className="table-header bg-[var(--main-red)] text-[var(--theme-white)]">
+            <th className="p-3">Item Code</th>
+            <th className="p-3">Item</th>
+            <th className="p-3">Quantity</th>
+            <th className="p-3">Vehicle Number</th>
+            <th className="p-3">Driver</th>
+            <th className="p-3">Company</th>
+            <th className="p-3">Estimated Arrival</th>
+            <th className="p-3">Estimated Leave</th>
 
-              {isSecurity && (
-                <>
-                  <th className="p-3">✔ Arrival</th>
-                  <th className="p-3">Actual Arrival</th>
-                  <th className="p-3">✔ Leave</th>
-                  <th className="p-3">Actual Leave</th>
-                </>
-              )}
-              
-              {isExecutive && (
-                <>
-                  <th className="p-3">Bay Assignment</th>
-                  <th className="p-3">Estimated Bay-In</th>
-                  <th className="p-3">Estimated Bay-Out</th>
-                  <th className="p-3">✔ Bay-In</th>
-                  <th className="p-3">Actual Bay-In</th>
-                  <th className="p-3">✔ Bay-Out</th>
-                  <th className="p-3">Actual Bay-Out</th>
-                </>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(data) && data.length > 0 ? (
-              data.map((visit, index) => (
-                <tr
-                  key={visit.VisitID}
-                  className={
-                    index % 2 === 0
-                      ? "bg-[var(--table-row-two)]"
-                      : "bg-[var(--table-row-one)]"
-                  }
-                >
-                  <td className="p-3">{visit.ItemCode}</td>
-                  <td className="p-3">{visit.Item}</td>
-                  <td className="p-3">{visit.Quantity}</td>
-                  <td className="p-3">{visit.VehicleNumber}</td>
-                  <td className="p-3">{visit.DriverName}</td>
-                  <td className="p-3">{visit.CompanyName}</td>
-                  <td className="p-3">
-                    {new Date(visit.EstimatedArrivalTime).toLocaleString('en-US', {
-                      hour12: false,
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </td>
-                  <td className="p-3">
-                    {new Date(visit.EstimatedLeaveTime).toLocaleString('en-US', {
-                      hour12: false,
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </td>
+            {isSecurity && (
+              <>
+                <th className="p-3">✔ Arrival</th>
+                <th className="p-3">Actual Arrival</th>
+                <th className="p-3">✔ Leave</th>
+                <th className="p-3">Actual Leave</th>
+              </>
+            )}
+            
+            {isExecutive && (
+              <>
+                <th className="p-3">Bay Assignment</th>
+                <th className="p-3">Estimated Bay-In</th>
+                <th className="p-3">Estimated Bay-Out</th>
+                <th className="p-3">✔ Bay-In</th>
+                <th className="p-3">Actual Bay-In</th>
+                <th className="p-3">✔ Bay-Out</th>
+                <th className="p-3">Actual Bay-Out</th>
+              </>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.isArray(data) && data.length > 0 ? (
+            data.map((visit, index) => (
+              <tr
+                key={visit.VisitID}
+                className={
+                  index % 2 === 0
+                    ? "bg-[var(--table-row-two)]"
+                    : "bg-[var(--table-row-one)]"
+                }
+              >
+                <td className="p-3">{visit.ItemCode}</td>
+                <td className="p-3">{visit.Item}</td>
+                <td className="p-3">{visit.Quantity}</td>
+                <td className="p-3">{visit.VehicleNumber}</td>
+                <td className="p-3">{visit.DriverName}</td>
+                <td className="p-3">{visit.CompanyName}</td>
+                <td className="p-3">
+                  {new Date(visit.EstimatedArrivalTime).toLocaleString('en-US', {
+                    hour12: false,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </td>
+                <td className="p-3">
+                  {new Date(visit.EstimatedLeaveTime).toLocaleString('en-US', {
+                    hour12: false,
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </td>
 
-                  {isSecurity && (
-                    <>
-                      <td className="p-3">
+                {isSecurity && (
+                  <>
+                    <td className="p-3">
+                      <input
+                        type="checkbox"
+                        className="accent-[var(--main-red)] cursor-pointer"
+                        onChange={() => updateTruckArrival(visit.VisitID)}
+                        checked={!!timestamps[visit.VisitID]?.arrival}
+                        disabled={!!visit.ActualArrivalTime}
+                      />
+                    </td>
+                    <td className="p-3">
+                      {visit.ActualArrivalTime ? 
+                        new Date(visit.ActualArrivalTime).toLocaleString('en-US', {
+                          hour12: false,
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : 
+                        timestamps[visit.VisitID]?.arrival || "-"
+                      }
+                    </td>
+                    <td className="p-3">
+                      {visit.ActualArrivalTime && !visit.ActualLeaveTime && (
                         <input
                           type="checkbox"
                           className="accent-[var(--main-red)] cursor-pointer"
-                          onChange={() => updateTruckArrival(visit.VisitID)}
-                          checked={!!timestamps[visit.VisitID]?.arrival}
-                          disabled={!!visit.ActualArrivalTime}
+                          onChange={() => updateTruckLeave(visit.VisitID)}
+                          checked={!!timestamps[visit.VisitID]?.leave}
                         />
-                      </td>
-                      <td className="p-3">
-                        {visit.ActualArrivalTime ? 
-                          new Date(visit.ActualArrivalTime).toLocaleString('en-US', {
-                            hour12: false,
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : 
-                          timestamps[visit.VisitID]?.arrival || "-"
-                        }
-                      </td>
-                      <td className="p-3">
-                        {visit.ActualArrivalTime && !visit.ActualLeaveTime && (
-                          <input
-                            type="checkbox"
-                            className="accent-[var(--main-red)] cursor-pointer"
-                            onChange={() => updateTruckLeave(visit.VisitID)}
-                            checked={!!timestamps[visit.VisitID]?.leave}
-                          />
-                        )}
-                      </td>
-                      <td className="p-3">
-                        {visit.ActualLeaveTime ? 
-                          new Date(visit.ActualLeaveTime).toLocaleString('en-US', {
-                            hour12: false,
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : 
-                          timestamps[visit.VisitID]?.leave || "-"
-                        }
-                      </td>
-                    </>
-                  )}
+                      )}
+                    </td>
+                    <td className="p-3">
+                      {visit.ActualLeaveTime ? 
+                        new Date(visit.ActualLeaveTime).toLocaleString('en-US', {
+                          hour12: false,
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : 
+                        timestamps[visit.VisitID]?.leave || "-"
+                      }
+                    </td>
+                  </>
+                )}
 
-                  {isExecutive && (
-                    <>
-                      <td className="p-3">
-                        <select 
-                          name="baynumber" 
-                          id="baynumber" 
-                          onChange={(e) => handleBaySelection(visit.VisitID, e.target.value)} 
-                          value={selectedBays[visit.VisitID] || ""}
-                          disabled={!!visit.ActualBayInTime} // Only disable if bay-in has already been recorded
-                        >
-                          <option value="">Select Bay</option>
-                          {availableBays.map(bay => (
+                {isExecutive && (
+                  <>
+                    <td className="p-3">
+                      <select 
+                        name="baynumber" 
+                        id="baynumber" 
+                        onChange={(e) => handleBaySelection(visit.VisitID, e.target.value)} 
+                        value={selectedBays[visit.VisitID] || ""}
+                        disabled={!!visit.ActualBayInTime} // Only disable if bay-in has already been recorded
+                      >
+                        <option value="">Select Bay</option>
+                        {(() => {
+                          const currentBayOption = visit.BayID && visit.BayNumber
+                            ? [{ BayID: visit.BayID, BayNumber: visit.BayNumber, LocationDescription: visit.LocationDescription }]
+                            : [];
+                          const options = [
+                            ...currentBayOption,
+                            ...availableBays.filter(b => b.BayID !== visit.BayID)
+                          ];
+                          return options.map(bay => (
                             <option key={bay.BayID} value={bay.BayID}>
                               {bay.BayNumber} - {bay.LocationDescription}
                             </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="p-3">
-                        {visit.EstimatedBayInTime ? 
-                          new Date(visit.EstimatedBayInTime).toLocaleString('en-US', {
-                            hour12: false,
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : "-"
-                        }
-                      </td>
-                      <td className="p-3">
-                        {visit.EstimatedBayOutTime ? 
-                          new Date(visit.EstimatedBayOutTime).toLocaleString('en-US', {
-                            hour12: false,
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : "-"
-                        }
-                      </td>
-                      <td className="p-3">
+                          ));
+                        })()}
+                      </select>
+                    </td>
+                    <td className="p-3">
+                      {visit.EstimatedBayInTime ? 
+                        new Date(visit.EstimatedBayInTime).toLocaleString('en-US', {
+                          hour12: false,
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : "-"
+                      }
+                    </td>
+                    <td className="p-3">
+                      {visit.EstimatedBayOutTime ? 
+                        new Date(visit.EstimatedBayOutTime).toLocaleString('en-US', {
+                          hour12: false,
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : "-"
+                      }
+                    </td>
+                    <td className="p-3">
+                      <input
+                        type="checkbox"
+                        className="accent-[var(--main-red)] cursor-pointer"
+                        onChange={() => updateBayInTime(visit.VisitID)}
+                        checked={!!timestamps[visit.VisitID]?.bayIn}
+                        disabled={!!visit.ActualBayInTime || !visit.BayID}
+                      />
+                    </td>
+                    <td className="p-3">
+                      {visit.ActualBayInTime ? 
+                        new Date(visit.ActualBayInTime).toLocaleString('en-US', {
+                          hour12: false,
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : 
+                        timestamps[visit.VisitID]?.bayIn || "-"
+                      }
+                    </td>
+                    <td className="p-3">
+                      {(visit.ActualBayInTime || timestamps[visit.VisitID]?.bayIn) && !visit.ActualBayOutTime && (
                         <input
                           type="checkbox"
                           className="accent-[var(--main-red)] cursor-pointer"
-                          onChange={() => updateBayInTime(visit.VisitID)}
-                          checked={!!timestamps[visit.VisitID]?.bayIn}
-                          disabled={!!visit.ActualBayInTime || !visit.BayID}
+                          onChange={() => updateBayOutTime(visit.VisitID)}
+                          checked={!!timestamps[visit.VisitID]?.bayOut}
                         />
-                      </td>
-                      <td className="p-3">
-                        {visit.ActualBayInTime ? 
-                          new Date(visit.ActualBayInTime).toLocaleString('en-US', {
-                            hour12: false,
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : 
-                          timestamps[visit.VisitID]?.bayIn || "-"
-                        }
-                      </td>
-                      <td className="p-3">
-                        {(visit.ActualBayInTime || timestamps[visit.VisitID]?.bayIn) && !visit.ActualBayOutTime && (
-                          <input
-                            type="checkbox"
-                            className="accent-[var(--main-red)] cursor-pointer"
-                            onChange={() => updateBayOutTime(visit.VisitID)}
-                            checked={!!timestamps[visit.VisitID]?.bayOut}
-                          />
-                        )}
-                      </td>
-                      <td className="p-3">
-                        {visit.ActualBayOutTime ? 
-                          new Date(visit.ActualBayOutTime).toLocaleString('en-US', {
-                            hour12: false,
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          }) : 
-                          timestamps[visit.VisitID]?.bayOut || "-"
-                        }
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={isSecurity ? 12 : isExecutive ? 19 : 8}
-                  className="p-4 text-center text-red-500"
-                >
-                  දත්ත ලබා ගත නොහැක / No data available
-                </td>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      {visit.ActualBayOutTime ? 
+                        new Date(visit.ActualBayOutTime).toLocaleString('en-US', {
+                          hour12: false,
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : 
+                        timestamps[visit.VisitID]?.bayOut || "-"
+                      }
+                    </td>
+                  </>
+                )}
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={isSecurity ? 12 : isExecutive ? 19 : 8}
+                className="p-4 text-center text-red-500"
+              >
+                දත්ත ලබා ගත නොහැක / No data available
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

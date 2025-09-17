@@ -34,12 +34,12 @@ CREATE TABLE BAY (
 );
 
 -- Insert sample bays (3 for loading, 3 for unloading)
-INSERT INTO BAY VALUES (1, 'Bay 01', 'Loading Bay A - Main Entrance', 'Loading', 'Available');
-INSERT INTO BAY VALUES (2, 'Bay 02', 'Loading Bay B - Side Entrance', 'Loading', 'Available');
-INSERT INTO BAY VALUES (3, 'Bay 03', 'Loading Bay C - Rear Entrance', 'Loading', 'Available');
-INSERT INTO BAY VALUES (4, 'Bay 04', 'Unloading Bay D - Main Exit', 'Unloading', 'Available');
-INSERT INTO BAY VALUES (5, 'Bay 05', 'Unloading Bay E - Side Exit', 'Unloading', 'Available');
-INSERT INTO BAY VALUES (6, 'Bay 06', 'Unloading Bay F - Rear Exit', 'Unloading', 'Available');
+INSERT INTO BAY VALUES (1, 'Bay 01', 'Loading Bay A', 'Loading', 'Available');
+INSERT INTO BAY VALUES (2, 'Bay 02', 'Loading Bay B', 'Loading', 'Available');
+INSERT INTO BAY VALUES (3, 'Bay 03', 'Loading Bay C', 'Loading', 'Available');
+INSERT INTO BAY VALUES (4, 'Bay 04', 'Unloading Bay D', 'Unloading', 'Available');
+INSERT INTO BAY VALUES (5, 'Bay 05', 'Unloading Bay E', 'Unloading', 'Available');
+INSERT INTO BAY VALUES (6, 'Bay 06', 'Unloading Bay F', 'Unloading', 'Available');
 
 -- Insert sample companies
 INSERT INTO COMPANY VALUES (1, 'Serendib Tea Company', '123 Tea Garden Road, Kandy, Sri Lanka', 'tea@serendib.com', 'Ravi Perera', '0771234567');
@@ -140,4 +140,32 @@ CREATE TABLE IF NOT EXISTS MONTHLY_INCOME (
     Month VARCHAR(7) NOT NULL, -- Format: YYYY-MM
     Income DECIMAL(15,2) NOT NULL,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- EMPLOYEE EFFICIENCY TRACKING TABLES
+-- Tracks login/logout work sessions per employee
+CREATE TABLE IF NOT EXISTS EMPLOYEE_SESSION (
+    SessionID INT PRIMARY KEY AUTO_INCREMENT,
+    EmployeeID INT NOT NULL,
+    Role ENUM('Executive Officer', 'Security Officer', 'Inventory Officer') NOT NULL,
+    LoginTime DATETIME NOT NULL,
+    LogoutTime DATETIME NULL,
+    TotalWorkSeconds INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_emp_session_emp FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID),
+    INDEX idx_emp_active (EmployeeID, LogoutTime)
+);
+
+-- Tracks trucks handled by employees during a session
+CREATE TABLE IF NOT EXISTS EMPLOYEE_TRUCK_ACTIVITY (
+    ActivityID INT PRIMARY KEY AUTO_INCREMENT,
+    SessionID INT NOT NULL,
+    EmployeeID INT NOT NULL,
+    VisitID INT NULL,
+    Type ENUM('Loading', 'Unloading') NOT NULL,
+    ActivityTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_activity_session FOREIGN KEY (SessionID) REFERENCES EMPLOYEE_SESSION(SessionID) ON DELETE CASCADE,
+    CONSTRAINT fk_activity_employee FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID),
+    CONSTRAINT fk_activity_visit FOREIGN KEY (VisitID) REFERENCES TRUCKVISIT(VisitID),
+    INDEX idx_activity_emp_time (EmployeeID, ActivityTime),
+    INDEX idx_activity_session (SessionID)
 );

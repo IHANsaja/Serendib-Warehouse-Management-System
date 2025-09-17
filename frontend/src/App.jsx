@@ -64,6 +64,7 @@ function App() {
                 <Route path="/inventory" element={<AIresponsePG />} />
               )}
 
+
               {/* Catch-all */}
               <Route path="*" element={<Navigate to="/" />} />
             </>

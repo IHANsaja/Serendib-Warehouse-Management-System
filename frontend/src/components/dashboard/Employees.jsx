@@ -6,6 +6,15 @@ import 'react-circular-progressbar/dist/styles.css';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 
+// Format seconds to HH:MM:SS
+const formatHMS = (seconds) => {
+    const h = Math.floor((seconds || 0) / 3600);
+    const m = Math.floor(((seconds || 0) % 3600) / 60);
+    const s = (seconds || 0) % 60;
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+};
+
 const Employees = () => {
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,15 +24,30 @@ const Employees = () => {
     useEffect(() => {
         const fetchEmployeeData = async () => {
             try {
-                // Adjust the URL to your backend server's address
-                const response = await axios.get('http://localhost:5000/api/employees/performance');
-                setEmployees(response.data);
+                // Use efficiency summaries API
+                const response = await axios.get('http://localhost:5000/api/efficiency/all', { withCredentials: true });
+                const list = Array.isArray(response.data) ? response.data : [];
+                const mapped = list.map((emp) => ({
+                    id: emp.employeeId,
+                    name: emp.name,
+                    role: emp.role,
+                    efficiency: emp.efficiency ?? 0,
+                    loadings: emp.counts?.loading ?? 0,
+                    unloadings: emp.counts?.unloading ?? 0,
+                    workSeconds: emp.workSeconds ?? 0,
+                    workingTime: formatHMS(emp.workSeconds ?? 0),
+                    period: emp.isActive ? 'Current Session' : (emp.hasSession ? 'Last Session' : '-')
+                }));
+                setEmployees(mapped);
             } catch (error) {
                 console.error("Error fetching employee data:", error);
+                setEmployees([]);
             }
         };
 
         fetchEmployeeData();
+        const interval = setInterval(fetchEmployeeData, 10000); // refresh periodically
+        return () => clearInterval(interval);
     }, []); // Empty dependency array ensures this runs only once
 
     const filteredEmployees = employees.filter((employee) =>
@@ -53,7 +77,6 @@ const Employees = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredEmployees.map((employee) => {
-                    // The backend now provides the final efficiency value
                     const performanceValue = employee.efficiency;
                     return (
                         <motion.div
@@ -75,7 +98,7 @@ const Employees = () => {
                                 >
                                     <CircularProgressbar
                                         value={performanceValue}
-                                        text={`${Math.round(performanceValue)}%`} // Display rounded value
+                                        text={`${Math.round(performanceValue)}%`}
                                         styles={buildStyles({
                                             textSize: '14px',
                                             pathColor: 'var(--main-red)',
@@ -85,6 +108,7 @@ const Employees = () => {
                                     />
                                 </motion.div>
                                 <div className="text-sm space-y-1">
+                                    <p>Work Time: <span className="font-medium">{employee.workingTime}</span></p>
                                     <p>{t('employee.loadings')}: <span className="font-medium">{employee.loadings}</span></p>
                                     <p>{t('employee.unloadings')}: <span className="font-medium">{employee.unloadings}</span></p>
                                     <p>{t('employee.efficiency')}: <span className="font-semibold text-[var(--main-red)]">{performanceValue}%</span></p>

@@ -1,10 +1,12 @@
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import LanguageToggle from "../common/LanguageToggle";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   return (
     <div className="left-0 flex w-full justify-between items-center p-4 bg-[var(--main-red)] z-1000">
       <h2 className="text-3xl font-bold text-[var(--theme-white)]">{t("headers.appTitle")}</h2>
