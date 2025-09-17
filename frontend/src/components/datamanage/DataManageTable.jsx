@@ -28,25 +28,25 @@ const DataManageTable = ({ role }) => {
   }, []);
 
   // Fetch available bays
-  useEffect(() => {
-    const fetchBays = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/api/bay/bays?type=${activeTab === 'loading' ? 'Loading' : 'Unloading'}`, {
-          credentials: "include",
-        });
-        
-        if (response.ok) {
-          const bays = await response.json();
-          console.log("Available bays for", activeTab, ":", bays);
-          setAvailableBays(bays);
-        } else {
-          console.error("Failed to fetch bays:", response.status);
-        }
-      } catch (error) {
-        console.error("Error fetching bays:", error);
+  const fetchBays = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/bay/bays?type=${activeTab === 'loading' ? 'Loading' : 'Unloading'}`, {
+        credentials: "include",
+      });
+      
+      if (response.ok) {
+        const bays = await response.json();
+        console.log("Available bays for", activeTab, ":", bays);
+        setAvailableBays(bays);
+      } else {
+        console.error("Failed to fetch bays:", response.status);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching bays:", error);
+    }
+  };
 
+  useEffect(() => {
     if (role === "Executive Officer") {
       fetchBays();
     }
@@ -153,7 +153,7 @@ const DataManageTable = ({ role }) => {
           [visitId]: bayId
         }));
         // Refresh data to show updated bay assignment
-        await fetchTruckVisits();
+        await Promise.all([fetchTruckVisits(), fetchBays()]);
         toast.success("Bay assigned successfully!");
       } else {
         const errorData = await response.json();
@@ -475,11 +475,20 @@ const DataManageTable = ({ role }) => {
                         disabled={!!visit.ActualBayInTime} // Only disable if bay-in has already been recorded
                       >
                         <option value="">Select Bay</option>
-                        {availableBays.map(bay => (
-                          <option key={bay.BayID} value={bay.BayID}>
-                            {bay.BayNumber} - {bay.LocationDescription}
-                          </option>
-                        ))}
+                        {(() => {
+                          const currentBayOption = visit.BayID && visit.BayNumber
+                            ? [{ BayID: visit.BayID, BayNumber: visit.BayNumber, LocationDescription: visit.LocationDescription }]
+                            : [];
+                          const options = [
+                            ...currentBayOption,
+                            ...availableBays.filter(b => b.BayID !== visit.BayID)
+                          ];
+                          return options.map(bay => (
+                            <option key={bay.BayID} value={bay.BayID}>
+                              {bay.BayNumber} - {bay.LocationDescription}
+                            </option>
+                          ));
+                        })()}
                       </select>
                     </td>
                     <td className="p-3">

@@ -3,7 +3,18 @@ import axios from "axios";
 
 // LiveCameraFeed handles playing from webcam or a provided video URL, and can run
 // a real-time inference loop (start/stop) that sends frames to Roboflow and draws boxes.
-const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoUrl = null, fps = 4 }, ref) => {
+const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoUrl = null, fps = 4, countConfig: userCountConfig = {} }, ref) => {
+  const defaultCountConfig = {
+    orientation: "vertical", // 'vertical' or 'horizontal'
+    position: 0.5, // fraction [0,1] across width (vertical) or height (horizontal)
+    direction: "negative", // 'negative' = high->low (right->left for vertical, bottom->top for horizontal); 'positive' = low->high
+    edge: "right", // for vertical: 'left'|'right'|'center'; for horizontal: 'top'|'bottom'|'center'
+    minConfidence: 0.55,
+    minHits: 2,
+    maxMiss: 10,
+    smoothing: 0.6,
+  };
+  const countConfig = { ...defaultCountConfig, ...(userCountConfig || {}) };
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const offscreenRef = useRef(null);
@@ -12,11 +23,18 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
   const [streamStarted, setStreamStarted] = useState(false);
   const [running, setRunning] = useState(false);
   const runningRef = useRef(false);
+  const playDelayTimerRef = useRef(null);
+
+  // Rendering state (decouple overlay drawing from inference)
+  const renderReqRef = useRef(null);
+  const latestPredsRef = useRef([]);
 
   // Tracking state
-  const tracksRef = useRef([]); // [{id,x,y,width,height,lastSeen}]
+  const tracksRef = useRef([]); // [{id,x,y,width,height,lastSeen,prevX,counted}]
   const nextIdRef = useRef(1);
   const frameIndexRef = useRef(0);
+  const crossedCountRef = useRef(0); // deprecated: kept for compatibility with older UI
+  const seenIdsRef = useRef(new Set()); // unique IDs observed this session
 
   const stopMediaTracks = () => {
     try {
@@ -40,7 +58,7 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.onloadedmetadata = () => {
-          videoRef.current.play();
+          // Do not auto-play; wait for user to click Start
           setStreamStarted(true);
         };
       }
@@ -55,7 +73,7 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
       videoRef.current.srcObject = null;
       videoRef.current.src = videoUrl;
       videoRef.current.onloadedmetadata = () => {
-        videoRef.current.play();
+        // Do not auto-play; wait for user to click Start
         setStreamStarted(true);
       };
     }
@@ -89,7 +107,7 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
     return off.toDataURL("image/jpeg").replace(/^data:image\/jpeg;base64,/, "");
   };
 
-  // Simple centroid tracker to assign persistent IDs
+  // Simple centroid tracker with EMA smoothing and hit/miss gating
   const assignIds = (predictions) => {
     const tracks = tracksRef.current;
     const now = ++frameIndexRef.current;
@@ -126,11 +144,18 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
       if (bestTi !== -1 && bestD2 <= thresh2) {
         // assign existing track
         const t = tracks[bestTi];
-        t.x = pred.x;
-        t.y = pred.y;
+        // store previous values before updating
+        t.prevX = t.x;
+        t.prevY = t.y;
+        // EMA smoothing on positions
+        const a = countConfig.smoothing ?? 0.6;
+        t.x = a * pred.x + (1 - a) * t.x;
+        t.y = a * pred.y + (1 - a) * t.y;
         t.width = pred.width;
         t.height = pred.height;
         t.lastSeen = now;
+        t.hitStreak = (t.hitStreak || 0) + 1;
+        t.missStreak = 0;
         assigned[pi] = t.id;
         unmatchedTracks.delete(bestTi);
       }
@@ -140,14 +165,32 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
     predictions.forEach((pred, pi) => {
       if (assigned[pi] != null) return;
       const id = nextIdRef.current++;
-      tracks.push({ id, x: pred.x, y: pred.y, width: pred.width, height: pred.height, lastSeen: now });
+      const x = pred.x;
+      const y = pred.y;
+      tracks.push({
+        id,
+        x,
+        y,
+        prevX: x,
+        prevY: y,
+        width: pred.width,
+        height: pred.height,
+        lastSeen: now,
+        counted: false,
+        hitStreak: 1,
+        missStreak: 0,
+      });
       assigned[pi] = id;
     });
 
-    // Remove stale tracks (not seen in last N frames)
-    const maxAge = 12; // frames
+    // Age unmatched tracks and remove stale ones
+    const maxMiss = countConfig.maxMiss ?? 10;
     for (let i = tracks.length - 1; i >= 0; i--) {
-      if (now - tracks[i].lastSeen > maxAge) {
+      const t = tracks[i];
+      if (unmatchedTracks.has(i)) {
+        t.missStreak = (t.missStreak || 0) + 1;
+      }
+      if ((t.missStreak || 0) > maxMiss) {
         tracks.splice(i, 1);
       }
     }
@@ -165,16 +208,32 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
     canvas.height = video.videoHeight;
     drawCtx.clearRect(0, 0, canvas.width, canvas.height);
 
+
     predictions.forEach((pred) => {
       const { x, y, width, height, class: label, confidence, id } = pred;
-      drawCtx.strokeStyle = "#A43424";
-      drawCtx.lineWidth = 2;
+      // Draw bright yellow box for visibility
+      drawCtx.strokeStyle = "#FFD700";
+      drawCtx.lineWidth = 3;
       drawCtx.strokeRect(x - width / 2, y - height / 2, width, height);
       drawCtx.font = "14px Arial";
-      drawCtx.fillStyle = "#A43424";
-      const caption = `ID ${id}${label ? ` · ${label}` : ""} ${confidence != null ? ` (${(confidence * 100).toFixed(1)}%)` : ""}`;
-      drawCtx.fillText(caption, x - width / 2, Math.max(12, y - height / 2 - 6));
+      const caption = `${label ? `${label}` : "Object"} ${(confidence != null ? (confidence * 100).toFixed(1) : "-")}%`;
+      // background for text for readability
+      const textX = x - width / 2;
+      const textY = Math.max(16, y - height / 2 - 8);
+      const metrics = drawCtx.measureText(caption);
+      const pad = 3;
+      drawCtx.fillStyle = "rgba(0,0,0,0.6)";
+      drawCtx.fillRect(textX - pad, textY - 12 - pad, metrics.width + pad * 2, 14 + pad * 2);
+      drawCtx.fillStyle = "#FFD700";
+      drawCtx.fillText(caption, textX, textY);
     });
+
+    // draw count box
+    drawCtx.fillStyle = "rgba(0,0,0,0.5)";
+    drawCtx.fillRect(8, 8, 160, 28);
+    drawCtx.fillStyle = "#FFFFFF";
+    drawCtx.font = "16px Arial";
+    drawCtx.fillText(`Count: ${seenIdsRef.current.size}`, 16, 28);
   };
 
   const inferOnce = async () => {
@@ -184,15 +243,34 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
     try {
       const response = await axios({
         method: "POST",
-        url: "https://serverless.roboflow.com/sack-counting-x1wzu-lkzgj/1",
-        params: { api_key: "BnFrWCGuYJw6CLOyIqiM" },
+        url: "https://serverless.roboflow.com/sack-counting-efnrk/4",
+        params: { api_key: "D6KdLcTHQOfcX0ulcppL" },
         data: base64Image,
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
-      const raw = response.data?.predictions || [];
+      // Filter predictions to only SACK class and reasonable confidence to reduce noise
+      const minConf = countConfig.minConfidence ?? 0.5;
+      const raw = (response.data?.predictions || []).filter(
+        (p) => (p.class === "SACK" || p.class_id === 0) && (p.confidence ?? 0) >= minConf
+      );
       const withIds = assignIds(raw);
-      drawDetections(withIds);
-      onDetections && onDetections(withIds);
+
+      // Update unique IDs set from stable tracks (no center line logic)
+      const minHits = countConfig.minHits ?? 2;
+      const tracks = tracksRef.current;
+      const trackMap = new Map(tracks.map((t) => [t.id, t]));
+      for (const p of withIds) {
+        if (p.id == null) continue;
+        const t = trackMap.get(p.id);
+        if (!t) continue;
+        if ((t.hitStreak || 0) >= minHits) {
+          seenIdsRef.current.add(p.id);
+        }
+      }
+
+      // Update latest predictions for the render loop; drawing is decoupled from inference.
+      latestPredsRef.current = withIds;
+      onDetections && onDetections(withIds, { count: seenIdsRef.current.size });
       return withIds;
     } catch (err) {
       console.error("Roboflow error:", err.message);
@@ -204,11 +282,58 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
     if (runningRef.current) return;
     // Reset tracking for a fresh session
     tracksRef.current = [];
+    latestPredsRef.current = [];
     nextIdRef.current = 1;
     frameIndexRef.current = 0;
+    crossedCountRef.current = 0; // legacy (no longer used)
+    seenIdsRef.current = new Set();
+
+    // Delay video playback slightly to help sync boxes with inference, but start inference immediately
+    const v = videoRef.current;
+    if (v) {
+      // finalize on video end
+      v.onended = () => {
+        try {
+          const total = seenIdsRef.current.size || 0;
+          window.dispatchEvent(new CustomEvent("ai:sessionComplete", { detail: { total } }));
+        } catch (_) {}
+        stop();
+      };
+      const playVideo = () => v.play().catch(() => {});
+      const startDelayMs = 600; // adjust if needed to better align boxes with playback
+      const startWhenReady = () => {
+        if (!runningRef.current) return;
+        if (v.readyState >= 2) {
+          playVideo();
+        } else {
+          const onReady = () => {
+            v.removeEventListener("loadeddata", onReady);
+            playVideo();
+          };
+          v.addEventListener("loadeddata", onReady);
+        }
+      };
+      if (playDelayTimerRef.current) clearTimeout(playDelayTimerRef.current);
+      playDelayTimerRef.current = setTimeout(startWhenReady, startDelayMs);
+    }
+
+    // Start render loop immediately so the center line and HUD appear without waiting for inference.
+    const render = () => {
+      if (!runningRef.current) return;
+      // Draw latest predictions (or none) every frame; keeps line visible instantly.
+      try {
+        drawDetections(latestPredsRef.current || []);
+      } catch (_) {}
+      renderReqRef.current = requestAnimationFrame(render);
+    };
 
     setRunning(true);
     runningRef.current = true;
+    // Kick off first draw immediately
+    drawDetections([]);
+    renderReqRef.current = requestAnimationFrame(render);
+
+    // Inference loop at target fps
     const interval = Math.max(1, Math.floor(1000 / fps));
     const loop = async () => {
       if (!runningRef.current) return;
@@ -225,6 +350,22 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
       clearTimeout(loopTimerRef.current);
       loopTimerRef.current = null;
     }
+    if (renderReqRef.current) {
+      cancelAnimationFrame(renderReqRef.current);
+      renderReqRef.current = null;
+    }
+    if (playDelayTimerRef.current) {
+      clearTimeout(playDelayTimerRef.current);
+      playDelayTimerRef.current = null;
+    }
+    // Pause the video playback until user starts again
+    const v = videoRef.current;
+    try {
+      if (v) {
+        v.pause();
+        v.onended = null;
+      }
+    } catch (_) {}
   };
 
   // Expose imperative controls
@@ -241,16 +382,13 @@ const LiveCameraFeed = forwardRef(({ onDetections, sourceType = "camera", videoU
       <video
         id="webcam-video"
         ref={videoRef}
-        autoPlay
         playsInline
         muted
         className="rounded-md w-full h-full bg-black"
-        style={{ transform: "scaleX(-1)" }}
       />
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full pointer-events-none"
-        style={{ transform: "scaleX(-1)" }}
       />
     </div>
   );

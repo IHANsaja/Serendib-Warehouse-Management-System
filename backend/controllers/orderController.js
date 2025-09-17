@@ -126,21 +126,15 @@ exports.createTruckVisit = async (req, res) => {
 exports.getOrdersByType = async (req, res) => {
   const { type } = req.query;
 
-  console.log("getOrdersByType called with type:", type);
-
   if (!type) {
-    console.log("No type provided, returning error");
     return res.status(400).json({ error: 'Order type is required (loading or unloading)' });
   }
 
   try {
-    console.log("Executing query: SELECT * FROM `ORDER` WHERE Type = ?", [type]);
     const [results] = await db.query(
       "SELECT * FROM `ORDER` WHERE Type = ?",
       [type]
     );
-    console.log("Query results:", results);
-    console.log("Number of results:", results.length);
     res.status(200).json(results);
   } catch (err) {
     console.error("Database error:", err);

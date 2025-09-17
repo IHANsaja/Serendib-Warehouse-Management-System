@@ -53,6 +53,27 @@ exports.updateTruckLeave = async (visitId, actualLeaveTime, seId) => {
      WHERE VisitID = ?`,
     [actualLeaveTime, seId, visitId]
   );
+
+  // Auto-record Security activity into efficiency tracking when truck leaves
+  try {
+    const [tvRows] = await db.execute(`SELECT Type FROM TRUCKVISIT WHERE VisitID = ?`, [visitId]);
+    const type = tvRows[0]?.Type; // 'Loading' or 'Unloading'
+    if (type && seId) {
+      const [sess] = await db.execute(
+        `SELECT SessionID FROM EMPLOYEE_SESSION WHERE EmployeeID = ? AND LogoutTime IS NULL ORDER BY SessionID DESC LIMIT 1`,
+        [seId]
+      );
+      if (sess.length > 0) {
+        await db.execute(
+          `INSERT INTO EMPLOYEE_TRUCK_ACTIVITY (SessionID, EmployeeID, VisitID, Type) VALUES (?, ?, ?, ?)`,
+          [sess[0].SessionID, seId, visitId, type]
+        );
+      }
+    }
+  } catch (err) {
+    console.error('Failed to auto-record Security activity:', err);
+  }
+
   return result;
 };
 
@@ -117,6 +138,26 @@ exports.updateBayOutTime = async (visitId, actualBayOutTime, eoId) => {
         [bayOp[0].BayID]
       );
     }
+
+    // Auto-record EO activity into efficiency tracking (if an active session exists)
+    try {
+      const [tvRows] = await db.execute(`SELECT Type FROM TRUCKVISIT WHERE VisitID = ?`, [visitId]);
+      const type = tvRows[0]?.Type; // 'Loading' or 'Unloading'
+      if (type && eoId) {
+        const [sess] = await db.execute(
+          `SELECT SessionID FROM EMPLOYEE_SESSION WHERE EmployeeID = ? AND LogoutTime IS NULL ORDER BY SessionID DESC LIMIT 1`,
+          [eoId]
+        );
+        if (sess.length > 0) {
+          await db.execute(
+            `INSERT INTO EMPLOYEE_TRUCK_ACTIVITY (SessionID, EmployeeID, VisitID, Type) VALUES (?, ?, ?, ?)`,
+            [sess[0].SessionID, eoId, visitId, type]
+          );
+        }
+      }
+    } catch (err) {
+      console.error('Failed to auto-record EO activity:', err);
+    }
   }
   
   return result;
@@ -155,58 +196,71 @@ exports.getTruckVisitsForExecutive = async () => {
 
 // Assign bay to truck visit
 exports.assignBayToVisit = async (visitId, bayId, eoId) => {
-  console.log('Assigning bay:', { visitId, bayId, eoId });
-  
   // Check if bay is available
   const [bayCheck] = await db.execute(
     `SELECT Status FROM BAY WHERE BayID = ?`,
     [bayId]
   );
   
-  console.log('Bay check result:', bayCheck);
-  
   if (bayCheck.length === 0 || bayCheck[0].Status !== 'Available') {
     throw new Error('Bay is not available');
   }
-  
-  // Get estimated bay times from the ORDER table
-  const [orderData] = await db.execute(
-    `SELECT o.EstimatedBayInTime, o.EstimatedBayOutTime 
-     FROM \`ORDER\` o 
-     JOIN TRUCKVISIT tv ON o.OrderID = tv.OrderID 
+
+  // Ensure selected bay type matches the truck visit type
+  const [[visitRow]] = await db.execute(
+    `SELECT tv.Type AS VisitType, o.EstimatedBayInTime, o.EstimatedBayOutTime
+     FROM TRUCKVISIT tv
+     JOIN \`ORDER\` o ON tv.OrderID = o.OrderID
      WHERE tv.VisitID = ?`,
     [visitId]
   );
-  
-  if (orderData.length === 0) {
-    throw new Error('Order not found for this visit');
+
+  if (!visitRow) {
+    throw new Error('Truck visit not found');
+  }
+
+  const [[bayRow]] = await db.execute(
+    `SELECT Type FROM BAY WHERE BayID = ?`,
+    [bayId]
+  );
+
+  if (!bayRow) {
+    throw new Error('Bay not found');
+  }
+
+  if (bayRow.Type !== visitRow.VisitType) {
+    throw new Error('Selected bay type does not match truck visit type');
   }
   
-  const estimatedBayInTime = orderData[0].EstimatedBayInTime;
-  const estimatedBayOutTime = orderData[0].EstimatedBayOutTime;
-  
-  console.log('Estimated times from order:', { estimatedBayInTime, estimatedBayOutTime });
+  // Get estimated bay times from the ORDER table
+  const estimatedBayInTime = visitRow.EstimatedBayInTime;
+  const estimatedBayOutTime = visitRow.EstimatedBayOutTime;
   
   // Create or update bay operation
   const [existing] = await db.execute(
-    `SELECT BayOpID FROM BAYOPERATION WHERE VisitID = ?`,
+    `SELECT BayOpID, BayID FROM BAYOPERATION WHERE VisitID = ?`,
     [visitId]
   );
   
-  console.log('Existing bay operation:', existing);
-  
   if (existing.length > 0) {
     // Update existing bay operation
-    console.log('Updating existing bay operation');
+    const previousBayId = existing[0].BayID;
     const [result] = await db.execute(
       `UPDATE BAYOPERATION 
        SET BayID = ?, EstimatedBayInTime = ?, EstimatedBayOutTime = ?, EO_ID = ? 
        WHERE VisitID = ?`,
       [bayId, estimatedBayInTime, estimatedBayOutTime, eoId, visitId]
     );
-    console.log('Update result:', result);
     
-    // Update bay status to occupied
+    // Free previously assigned bay if different
+    if (previousBayId && previousBayId !== bayId) {
+      await db.execute(
+        `UPDATE BAY SET Status = 'Available' WHERE BayID = ?`,
+        [previousBayId]
+      );
+    }
+
+    // Update new bay status to occupied
     await db.execute(
       `UPDATE BAY SET Status = 'Occupied' WHERE BayID = ?`,
       [bayId]
@@ -215,14 +269,12 @@ exports.assignBayToVisit = async (visitId, bayId, eoId) => {
     return result;
   } else {
     // Create new bay operation
-    console.log('Creating new bay operation');
     const [result] = await db.execute(
       `INSERT INTO BAYOPERATION 
        (VisitID, BayID, EstimatedBayInTime, EstimatedBayOutTime, EO_ID) 
        VALUES (?, ?, ?, ?, ?)`,
       [visitId, bayId, estimatedBayInTime, estimatedBayOutTime, eoId]
     );
-    console.log('Insert result:', result);
     
     // Update bay status to occupied
     await db.execute(

@@ -138,15 +138,11 @@ exports.assignBayToVisit = async (req, res) => {
     const { visitId } = req.params;
     const { bayId, eoId } = req.body;
     
-    console.log('Assign bay request:', { visitId, bayId, eoId });
-    
     if (!bayId || !eoId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
     const result = await bayModel.assignBayToVisit(visitId, bayId, eoId);
-    
-    console.log('Assign bay result:', result);
     
     res.json({ message: "Bay assigned successfully" });
   } catch (error) {

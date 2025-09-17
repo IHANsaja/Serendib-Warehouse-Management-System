@@ -141,3 +141,31 @@ CREATE TABLE IF NOT EXISTS MONTHLY_INCOME (
     Income DECIMAL(15,2) NOT NULL,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- EMPLOYEE EFFICIENCY TRACKING TABLES
+-- Tracks login/logout work sessions per employee
+CREATE TABLE IF NOT EXISTS EMPLOYEE_SESSION (
+    SessionID INT PRIMARY KEY AUTO_INCREMENT,
+    EmployeeID INT NOT NULL,
+    Role ENUM('Executive Officer', 'Security Officer', 'Inventory Officer') NOT NULL,
+    LoginTime DATETIME NOT NULL,
+    LogoutTime DATETIME NULL,
+    TotalWorkSeconds INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_emp_session_emp FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID),
+    INDEX idx_emp_active (EmployeeID, LogoutTime)
+);
+
+-- Tracks trucks handled by employees during a session
+CREATE TABLE IF NOT EXISTS EMPLOYEE_TRUCK_ACTIVITY (
+    ActivityID INT PRIMARY KEY AUTO_INCREMENT,
+    SessionID INT NOT NULL,
+    EmployeeID INT NOT NULL,
+    VisitID INT NULL,
+    Type ENUM('Loading', 'Unloading') NOT NULL,
+    ActivityTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_activity_session FOREIGN KEY (SessionID) REFERENCES EMPLOYEE_SESSION(SessionID) ON DELETE CASCADE,
+    CONSTRAINT fk_activity_employee FOREIGN KEY (EmployeeID) REFERENCES EMPLOYEE(EmployeeID),
+    CONSTRAINT fk_activity_visit FOREIGN KEY (VisitID) REFERENCES TRUCKVISIT(VisitID),
+    INDEX idx_activity_emp_time (EmployeeID, ActivityTime),
+    INDEX idx_activity_session (SessionID)
+);
