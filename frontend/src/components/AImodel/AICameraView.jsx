@@ -5,7 +5,7 @@ import { useAIStatus } from "../../context/AIStatusContext";
 const AICameraView = () => {
   const feedRef = useRef(null);
   const { updateStatus } = useAIStatus();
-  const [sourceType, setSourceType] = useState("camera"); // 'camera' | 'video'
+  const [sourceType, setSourceType] = useState("camera"); 
   const [videoUrl, setVideoUrl] = useState(null);
   const [running, setRunning] = useState(false);
   const [uniqueTotal, setUniqueTotal] = useState(0);
